@@ -31,7 +31,7 @@ class ConfirmationScreen extends StatelessWidget {
             Text(
               'Votre billet est prêt.',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha:0.8),
                 fontSize: 16,
               ),
             ),
@@ -90,8 +90,8 @@ class ConfirmationScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('DÉPART', style: TextStyle(fontSize: 12, color: AppTheme.textSecondaryColor)),
-            Text('ABIDJAN', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text('Gare de Treichville', style: TextStyle(fontSize: 10, color: AppTheme.textSecondaryColor)),
+            Text('Aleg', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('Gare de Salla', style: TextStyle(fontSize: 10, color: AppTheme.textSecondaryColor)),
           ],
         ),
         Icon(FontAwesomeIcons.arrowRight, color: AppTheme.secondaryColor, size: 20),
@@ -99,8 +99,8 @@ class ConfirmationScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text('ARRIVÉE', style: TextStyle(fontSize: 12, color: AppTheme.textSecondaryColor)),
-            Text('BOUAKÉ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text('Gare Centrale', style: TextStyle(fontSize: 10, color: AppTheme.textSecondaryColor)),
+            Text('Nouakchott', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('Gare de Madrid', style: TextStyle(fontSize: 10, color: AppTheme.textSecondaryColor)),
           ],
         ),
       ],
@@ -122,8 +122,8 @@ class ConfirmationScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _DetailItem(label: 'PASSAGER', value: 'Jean Kouassi'),
-            _DetailItem(label: 'COMPAGNIE', value: 'UTB Express'),
+            _DetailItem(label: 'PASSAGER', value: 'Moustapha taleb'),
+            _DetailItem(label: 'COMPAGNIE', value: 'Esselam'),
           ],
         ),
       ],

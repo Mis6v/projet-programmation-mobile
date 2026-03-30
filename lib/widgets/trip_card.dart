@@ -38,7 +38,7 @@ class TripCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${trip.price.toStringAsFixed(0)} FCFA',
+                    '${trip.price.toStringAsFixed(0)} MRU',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: AppTheme.secondaryColor,

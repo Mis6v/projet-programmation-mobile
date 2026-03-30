@@ -52,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Jean Kouassi',
+            'Moustapha taleb',
             style: TextStyle(
               color: Colors.white,
               fontSize: 22,
@@ -61,7 +61,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'jean.kouassi@email.com',
+            'tafataleb21@email.com',
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 14,

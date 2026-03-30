@@ -11,8 +11,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String _departureCity = 'Abidjan';
-  String _destinationCity = 'Bouaké';
+  String _departureCity = 'Nouakchott';
+  String _destinationCity = 'Aleg';
   DateTime _selectedDate = DateTime.now();
   int _passengerCount = 1;
 

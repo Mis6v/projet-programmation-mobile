@@ -62,7 +62,7 @@ class _BookingScreenState extends State<BookingScreen> {
               _buildTextField(
                 controller: _phoneController,
                 label: 'Numéro de téléphone',
-                hint: 'Ex: +225 07 00 00 00 00',
+                hint: 'Ex: +222 42 38 21 82',
                 icon: Icons.phone,
                 keyboardType: TextInputType.phone,
                 validator: (value) {
@@ -134,7 +134,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
           ),
           Text(
-            '${widget.trip.price.toStringAsFixed(0)} FCFA',
+            '${widget.trip.price.toStringAsFixed(0)} MRU',
             style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.secondaryColor),
           ),
         ],
@@ -204,7 +204,7 @@ class _BookingScreenState extends State<BookingScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Prix du billet'),
-            Text('5 000 FCFA'),
+            Text('5 000 MRU'),
           ],
         ),
         const SizedBox(height: 8),
@@ -212,7 +212,7 @@ class _BookingScreenState extends State<BookingScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Frais de service'),
-            Text('200 FCFA'),
+            Text('200 MRU'),
           ],
         ),
         const Divider(height: 24),
@@ -224,7 +224,7 @@ class _BookingScreenState extends State<BookingScreen> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             Text(
-              '5 200 FCFA',
+              '5 200 MRU',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

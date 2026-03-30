@@ -37,8 +37,8 @@ class BookingsScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         _buildBookingItem(
-          departure: 'Abidjan',
-          destination: 'Bouaké',
+          departure: 'Nouakchoot',
+          destination: 'Boutilimit',
           date: '28 Mar 2026',
           time: '08:30',
           status: 'Confirmé',
@@ -53,16 +53,16 @@ class BookingsScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         _buildBookingItem(
-          departure: 'Yamoussoukro',
-          destination: 'Abidjan',
+          departure: 'Aleg',
+          destination: 'Nouakchoot',
           date: '15 Mar 2026',
           time: '14:00',
           status: 'Terminé',
           statusColor: Colors.grey,
         ),
         _buildBookingItem(
-          departure: 'Abidjan',
-          destination: 'Yamoussoukro',
+          departure: 'Nouakchoot',
+          destination: 'Naima',
           date: '10 Mar 2026',
           time: '07:00',
           status: 'Terminé',

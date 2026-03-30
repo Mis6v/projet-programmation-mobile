@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/screens/home_screen.dart';
+import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/screens/search_screen.dart';
 import 'package:transport_app/screens/bookings_screen.dart';
 import 'package:transport_app/screens/profile_screen.dart';
@@ -16,7 +16,7 @@ class TransportApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Transport Express',
+      title: 'Esselam Transport',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const MainNavigation(),

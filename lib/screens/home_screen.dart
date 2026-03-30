@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: const Text(
-                'Transport Express',
+                'Esselam Transport ',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               background: Container(
@@ -110,9 +110,9 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildLocationField(FontAwesomeIcons.locationDot, 'Ville de départ', 'Ex: Abidjan'),
+          _buildLocationField(FontAwesomeIcons.locationDot, 'Ville de départ', 'Ex: Laiyoun'),
           const Divider(height: 30),
-          _buildLocationField(FontAwesomeIcons.locationArrow, 'Destination', 'Ex: Yamoussoukro'),
+          _buildLocationField(FontAwesomeIcons.locationArrow, 'Destination', 'Ex:Kiffa'),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
