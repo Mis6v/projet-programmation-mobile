@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
+import 'EditProfileScreen.dart';
+import 'NotificationScreen.dart';
+import 'PaymentScreen.dart';
+import 'SupportScreen.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -10,12 +15,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mon Profil'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {},
-          ),
-        ],
+
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -77,11 +77,18 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          _buildMenuItem(FontAwesomeIcons.userPen, 'Modifier le profil', () {}),
-          _buildMenuItem(FontAwesomeIcons.creditCard, 'Moyens de paiement', () {}),
-          _buildMenuItem(FontAwesomeIcons.bell, 'Notifications', () {}),
-          _buildMenuItem(FontAwesomeIcons.shieldHalved, 'Sécurité', () {}),
-          _buildMenuItem(FontAwesomeIcons.circleQuestion, 'Aide & Support', () {}),
+          _buildMenuItem(FontAwesomeIcons.userPen, 'Modifier le profil', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()));
+          }),
+          _buildMenuItem(FontAwesomeIcons.creditCard, 'Moyens de paiement', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentScreen()));
+          }),
+          _buildMenuItem(FontAwesomeIcons.bell, 'Notifications', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
+          }),
+          _buildMenuItem(FontAwesomeIcons.circleQuestion, 'Aide & Support', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const SupportScreen()));
+          }),
         ],
       ),
     );

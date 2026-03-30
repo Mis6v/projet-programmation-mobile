@@ -3,6 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
+import 'Screens/trips_screen.dart';
+
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -15,6 +18,36 @@ class _SearchScreenState extends State<SearchScreen> {
   String _destinationCity = 'Aleg';
   DateTime _selectedDate = DateTime.now();
   int _passengerCount = 1;
+
+
+  Future<String?> _selectCity() async {
+    return await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: const Text('Choisir une ville'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, 'Nouakchott'),
+              child: const Text('Nouakchott'),
+            ),
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, 'Aleg'),
+              child: const Text('Aleg'),
+            ),
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, 'Rosso'),
+              child: const Text('Rosso'),
+            ),
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, 'Nouadhibou'),
+              child: const Text('Nouadhibou'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -85,8 +118,21 @@ class _SearchScreenState extends State<SearchScreen> {
               icon: FontAwesomeIcons.locationDot,
               label: 'Ville de départ',
               value: _departureCity,
-              onTap: () {
-                // Action pour changer la ville
+              onTap: () async {
+                final city = await _selectCity();
+                if (city != null) {
+                  if (city == _destinationCity){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Choisisser une ville différente'),
+                      ),
+                    );
+                    return;
+                  }
+                  setState(() {
+                    _departureCity = city;
+                  });
+                }
               },
             ),
             const Divider(height: 32),
@@ -94,8 +140,22 @@ class _SearchScreenState extends State<SearchScreen> {
               icon: FontAwesomeIcons.locationArrow,
               label: 'Destination',
               value: _destinationCity,
-              onTap: () {
-                // Action pour changer la ville
+              onTap: () async {
+                final city = await _selectCity();
+                if (city != null) {
+
+                  if (city == _departureCity) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Choisisser une ville différente'),
+                      ),
+                    );
+                    return;
+                  }
+                  setState(() {
+                    _destinationCity = city;
+                  });
+                }
               },
             ),
             const Divider(height: 32),
@@ -130,7 +190,22 @@ class _SearchScreenState extends State<SearchScreen> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  // Action de recherche vers les résultats
+
+                  print('Departure: $_departureCity');
+                  print('Destination: $_destinationCity');
+                  print('Date: $_selectedDate');
+                  print('Passengers: $_passengerCount');
+
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TripsScreen(
+                        departure: _departureCity,
+                        destination: _destinationCity,
+                      ),
+                    ),
+                  );
                 },
                 child: const Text('TROUVER UN VOYAGE'),
               ),

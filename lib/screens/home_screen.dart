@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/widgets/trip_card.dart';
-import 'package:transport_app/models/trip.dart';
+
 import 'package:transport_app/utils/mock_data.dart';
 import 'package:transport_app/screens/booking_screen.dart';
 
