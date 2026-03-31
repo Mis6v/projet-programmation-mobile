@@ -1,4 +1,6 @@
-import 'package:transport_app/models/trip.dart';
+
+
+import '../screens/models/trip.dart';
 
 class MockData {
   static List<Trip> getPopularTrips() {
@@ -40,9 +42,9 @@ class MockData {
   }
 
   static List<Trip> searchTrips(String from, String to) {
-    return getPopularTrips().where((trip) => 
-      trip.departureCity.toLowerCase() == from.toLowerCase() && 
-      trip.destinationCity.toLowerCase() == to.toLowerCase()
-    ).toList();
+    return getPopularTrips().where((trip) {
+      return trip.departureCity.toLowerCase() == from.toLowerCase() &&
+          trip.destinationCity.toLowerCase() == to.toLowerCase();
+    }).toList();
   }
 }

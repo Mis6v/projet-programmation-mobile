@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:transport_app/models/trip.dart';
 import 'package:transport_app/theme/app_theme.dart';
+
+
+import '../screens/models/trip.dart';
 
 class TripCard extends StatelessWidget {
   final Trip trip;
@@ -17,6 +19,11 @@ class TripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timeFormat = DateFormat('HH:mm');
+
+
+    final duration = trip.arrivalTime.difference(trip.departureTime);
+    final durationText =
+        '${duration.inHours}h ${duration.inMinutes.remainder(60)}min';
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -47,19 +54,24 @@ class TripCard extends StatelessWidget {
                   ),
                 ],
               ),
+
               const SizedBox(height: 16),
+
               Row(
                 children: [
                   Column(
                     children: [
                       Text(
                         timeFormat.format(trip.departureTime),
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 4),
-                      Text(trip.departureCity, style: const TextStyle(fontSize: 12)),
+                      Text(trip.departureCity,
+                          style: const TextStyle(fontSize: 12)),
                     ],
                   ),
+
                   Expanded(
                     child: Column(
                       children: [
@@ -67,8 +79,8 @@ class TripCard extends StatelessWidget {
                           children: [
                             const Expanded(child: Divider(indent: 10, endIndent: 10)),
                             Icon(
-                              trip.transportType == 'Bus' 
-                                  ? FontAwesomeIcons.bus 
+                              trip.transportType == 'Bus'
+                                  ? FontAwesomeIcons.bus
                                   : FontAwesomeIcons.train,
                               size: 16,
                               color: AppTheme.textSecondaryColor,
@@ -77,44 +89,55 @@ class TripCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          trip.duration,
-                          style: const TextStyle(fontSize: 10, color: AppTheme.textSecondaryColor),
+                          durationText,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: AppTheme.textSecondaryColor,
+                          ),
                         ),
                       ],
                     ),
                   ),
+
                   Column(
                     children: [
                       Text(
                         timeFormat.format(trip.arrivalTime),
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 4),
-                      Text(trip.destinationCity, style: const TextStyle(fontSize: 12)),
+                      Text(trip.destinationCity,
+                          style: const TextStyle(fontSize: 12)),
                     ],
                   ),
                 ],
               ),
+
               const SizedBox(height: 12),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.event_seat, size: 14, color: AppTheme.textSecondaryColor),
+                      const Icon(Icons.event_seat,
+                          size: 14, color: AppTheme.textSecondaryColor),
                       const SizedBox(width: 4),
                       Text(
                         '${trip.availableSeats} places libres',
-                        style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryColor),
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.textSecondaryColor),
                       ),
                     ],
                   ),
                   const Text(
                     'Réserver >',
                     style: TextStyle(
-                      fontSize: 12, 
-                      fontWeight: FontWeight.bold, 
-                      color: AppTheme.primaryColor
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
                     ),
                   ),
                 ],

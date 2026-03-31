@@ -208,7 +208,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _buildSeatSelection() {
     return DropdownButtonFormField<String>(
-      value: _selectedSeat,
+      initialValue: _selectedSeat,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
