@@ -7,15 +7,24 @@ import 'NotificationScreen.dart';
 import 'PaymentScreen.dart';
 import 'SupportScreen.dart';
 
-class ProfileScreen extends StatelessWidget {
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+
+  String name = "Moustapha taleb";
+  String email = "tafataleb21@email.com";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mon Profil'),
-
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -51,17 +60,22 @@ class ProfileScreen extends StatelessWidget {
             child: Icon(Icons.person, size: 60, color: AppTheme.primaryColor),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Moustapha taleb',
-            style: TextStyle(
+
+          // ✅ Nom dynamique
+          Text(
+            name,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
+
           const SizedBox(height: 4),
+
+          // ✅ Email dynamique
           Text(
-            'tafataleb21@email.com',
+            email,
             style: TextStyle(
               color: Colors.white.withOpacity(0.8),
               fontSize: 14,
@@ -77,15 +91,36 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          _buildMenuItem(FontAwesomeIcons.userPen, 'Modifier le profil', () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()));
+          _buildMenuItem(FontAwesomeIcons.userPen, 'Modifier le profil', () async {
+
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => EditProfileScreen(
+                  currentName: name,
+                  currentEmail: email,
+                ),
+              ),
+            );
+
+            // ✅ Mise à jour après retour
+            if (result != null) {
+              setState(() {
+                name = result['name'];
+                email = result['email'];
+              });
+            }
+
           }),
+
           _buildMenuItem(FontAwesomeIcons.creditCard, 'Moyens de paiement', () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentScreen()));
           }),
+
           _buildMenuItem(FontAwesomeIcons.bell, 'Notifications', () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
           }),
+
           _buildMenuItem(FontAwesomeIcons.circleQuestion, 'Aide & Support', () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const SupportScreen()));
           }),

@@ -1,92 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:transport_app/screens/search_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/widgets/trip_card.dart';
 
 import 'package:transport_app/utils/mock_data.dart';
 import 'package:transport_app/screens/booking_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:transport_app/theme/app_theme.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final popularTrips = MockData.getPopularTrips();
-
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 200.0,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
-                'Esselam Transport ',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [AppTheme.primaryColor, Color(0xFF3F51B5)],
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(FontAwesomeIcons.bus, size: 60, color: Colors.white),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Voyagez en toute sérénité',
-                        style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
+      body: Stack(
+        children: [
+
+          // ✅ Background (image bus légère)
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.08,
+              child: Image.asset(
+                'assets/images/bus.png', // 👉 ajoute une image bus ici
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+
+          // ✅ Contenu
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+                  const SizedBox(height: 20),
+
+                  // 🔵 Titre
                   const Text(
-                    'Où voulez-vous aller ?',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    "ESSELAM",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                      letterSpacing: 2,
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  _buildQuickSearch(context),
-                  const SizedBox(height: 24),
+
+                  const SizedBox(height: 10),
+
                   const Text(
-                    'Destinations Populaires',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    "Transport fiable et sécurisé",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+
+                  const SizedBox(height: 40),
+
+                  // ✅ Carte 1
+                  _buildCard(
+                    icon: FontAwesomeIcons.bus,
+                    title: "Voyagez facilement",
+                    description:
+                    "Réservez vos billets de transport en quelques clics sans vous déplacer.",
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ✅ Carte 2
+                  _buildCard(
+                    icon: FontAwesomeIcons.clock,
+                    title: "Gain de temps",
+                    description:
+                    "Consultez les horaires et choisissez le voyage qui vous convient.",
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ✅ Carte 3
+                  _buildCard(
+                    icon: FontAwesomeIcons.shieldHalved,
+                    title: "Sécurité",
+                    description:
+                    "Voyagez avec des compagnies fiables comme Esselam.",
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ✅ Carte 4
+                  _buildCard(
+                    icon: FontAwesomeIcons.mobileScreen,
+                    title: "Simple à utiliser",
+                    description:
+                    "Une application claire et facile pour tous les utilisateurs.",
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // ✅ Bouton commencer
+    SizedBox(
+    width: double.infinity,
+    child: ElevatedButton(
+    onPressed: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => const SearchScreen(),
+    ),
+    );
+    },
+    child: const Text("COMMENCER"),
+    ),
+    ),
+
                 ],
               ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return TripCard(
-                  trip: popularTrips[index],
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BookingScreen(trip: popularTrips[index]),
-                      ),
-                    );
-                  },
-                );
-              },
-              childCount: popularTrips.length,
             ),
           ),
         ],
@@ -94,7 +128,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickSearch(BuildContext context) {
+  // 🔹 Widget carte info
+  Widget _buildCard({
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -104,45 +143,37 @@ class HomeScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         children: [
-          _buildLocationField(FontAwesomeIcons.locationDot, 'Ville de départ', 'Ex: Laiyoun'),
-          const Divider(height: 30),
-          _buildLocationField(FontAwesomeIcons.locationArrow, 'Destination', 'Ex:Kiffa'),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // Action de recherche
-              },
-              child: const Text('RECHERCHER'),
+          Icon(icon, color: AppTheme.primaryColor, size: 28),
+          const SizedBox(width: 16),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                Text(
+                  description,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildLocationField(IconData icon, String label, String hint) {
-    return Row(
-      children: [
-        Icon(icon, color: AppTheme.primaryColor, size: 20),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryColor)),
-              Text(hint, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

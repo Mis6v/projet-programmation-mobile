@@ -5,7 +5,7 @@ import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/screens/search_screen.dart';
 import 'package:transport_app/screens/bookings_screen.dart';
 import 'package:transport_app/screens/profile_screen.dart';
-
+import 'package:transport_app/screens/Loginscreen.dart';
 void main() {
   runApp(const TransportApp());
 }
@@ -19,7 +19,7 @@ class TransportApp extends StatelessWidget {
       title: 'Esselam Transport',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const MainNavigation(),
+      home: const LoginScreen(),
     );
   }
 }
@@ -84,3 +84,5 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
+
+
