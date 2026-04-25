@@ -79,8 +79,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Entrez votre numéro';
                   }
-                  if (!RegExp(r'^[0-9]{8}$').hasMatch(value)) {
-                    return 'Numéro invalide (8 chiffres)';
+                  if (!RegExp(r'^[2-4][0-9]{7}$').hasMatch(value)) {
+                    return 'Numéro invalide (8 chiffres, doit commencer par 2, 3 ou 4)';
+
                   }
                   return null;
                 },
@@ -99,6 +100,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Entrez votre code';
+                  }
+                  if (!RegExp(r'^[0-9]{4}$').hasMatch(value)) {
+                    return 'code invalide (4 chiffres)';
+
                   }
                   return null;
                 },

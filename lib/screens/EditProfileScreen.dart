@@ -42,14 +42,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(title: const Text('Modifier le profil')),
       body: Padding(
         padding: const EdgeInsets.all(20),
-
-        // ✅ FORM
         child: Form(
           key: _formKey,
           child: Column(
             children: [
 
-              // ✅ NOM
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Nom'),
@@ -62,7 +59,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
 
-              // ✅ EMAIL
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
@@ -82,11 +78,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
               const SizedBox(height: 20),
 
-              // ✅ BOUTON
               ElevatedButton(
                 onPressed: () {
 
-                  // 🔥 Validation
                   if (_formKey.currentState!.validate()) {
 
                     Navigator.pop(context, {

@@ -1,18 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:transport_app/screens/service/SeatSelectionScreen.dart';
 import 'package:transport_app/screens/service/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
-import 'package:transport_app/screens/confirmation_screen.dart';
-
+import 'confirmation_screen.dart';
 import 'models/trip.dart';
-
 
 class BookingScreen extends StatefulWidget {
   final Trip trip;
-
-  const BookingScreen({super.key, required this.trip});
+  final List<dynamic> seats;
+  const BookingScreen({super.key, required this.trip,required this.seats,});
 
   @override
   State<BookingScreen> createState() => _BookingScreenState();
@@ -23,7 +21,7 @@ class _BookingScreenState extends State<BookingScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
 
-  String _selectedSeat = '12A';
+
   bool _isLoading = false;
 
   @override
@@ -32,18 +30,20 @@ class _BookingScreenState extends State<BookingScreen> {
     _phoneController.dispose();
     super.dispose();
   }
-
-
   Future<void> _onConfirm() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
+    final List<int> seatNumbers = widget.seats
+        .map((s) => int.parse(s.id.toString()))
+        .toList();
+
     final success = await ApiService.createBooking(
       widget.trip.id,
       _nameController.text,
       _phoneController.text,
-      _selectedSeat,
+      seatNumbers,
     );
 
     setState(() => _isLoading = false);
@@ -52,17 +52,16 @@ class _BookingScreenState extends State<BookingScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ConfirmationScreen(),
+          builder: (context) => ConfirmationScreen(trip: widget.trip),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erreur lors de la réservation'),
-        ),
+        const SnackBar(content: Text('Erreur lors de la réservation')),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -122,8 +121,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
+              _buildSelectedSeats(),
 
-              _buildSeatSelection(),
 
               const SizedBox(height: 40),
 
@@ -152,7 +151,7 @@ class _BookingScreenState extends State<BookingScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(0.05),
+        color: AppTheme.primaryColor.withValues(alpha : 0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -206,30 +205,31 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildSeatSelection() {
-    return DropdownButtonFormField<String>(
-      initialValue: _selectedSeat,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+  Widget _buildSelectedSeats() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(12),
       ),
-      items: ['12A', '12B', '14C', '15A']
-          .map((seat) => DropdownMenuItem(
-        value: seat,
-        child: Text(seat),
-      ))
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedSeat = value!;
-        });
-      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "المقاعد المختارة",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            widget.seats.map((s) => s.id.toString()).join(', '),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildPaymentSummary() {
-    final total = widget.trip.price + 200;
+    final total = (widget.trip.price * widget.seats.length) + 200;
 
     return Column(
       children: [

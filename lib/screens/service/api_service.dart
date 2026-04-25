@@ -57,7 +57,7 @@ class ApiService {
       String tripId,
       String name,
       String phone,
-      String seat,
+      List<int> seatNumbers,
       ) async {
     try {
       final response = await http.post(
@@ -67,7 +67,7 @@ class ApiService {
           'tripId': tripId,
           'passengerName': name,
           'phoneNumber': phone,
-          'seatNumber': seat,
+          'seatNumbers': seatNumbers,
         }),
       );
 

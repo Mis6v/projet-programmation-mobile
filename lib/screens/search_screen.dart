@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:transport_app/screens/service/SeatSelectionScreen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
 import 'Screens/trips_screen.dart';
@@ -18,6 +19,9 @@ class _SearchScreenState extends State<SearchScreen> {
   String _destinationCity = 'Aleg';
   DateTime _selectedDate = DateTime.now();
   int _passengerCount = 1;
+  List<dynamic> selectedSeats = [];
+
+
 
 
   Future<String?> _selectCity() async {
@@ -175,10 +179,20 @@ class _SearchScreenState extends State<SearchScreen> {
                     icon: FontAwesomeIcons.users,
                     label: 'Passagers',
                     value: '$_passengerCount Personne${_passengerCount > 1 ? 's' : ''}',
-                    onTap: () {
-                      setState(() {
-                        _passengerCount = (_passengerCount % 5) + 1;
-                      });
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SeatSelectionScreen(),
+                        ),
+                      );
+
+                      if (result != null) {
+                        setState(() {
+                          selectedSeats = result; // ✅ stocke correctement
+                          _passengerCount = selectedSeats.length;
+                        });
+                      }
                     },
                   ),
                 ),
@@ -203,6 +217,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       builder: (context) => TripsScreen(
                         departure: _departureCity,
                         destination: _destinationCity,
+                        seats: selectedSeats,
                       ),
                     ),
                   );

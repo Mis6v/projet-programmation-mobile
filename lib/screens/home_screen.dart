@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:transport_app/screens/search_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
-import 'package:transport_app/widgets/trip_card.dart';
 
-import 'package:transport_app/utils/mock_data.dart';
-import 'package:transport_app/screens/booking_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/theme/app_theme.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -18,29 +12,22 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-
-          // ✅ Background (image bus légère)
           Positioned.fill(
             child: Opacity(
               opacity: 0.08,
               child: Image.asset(
-                'assets/images/bus.png', // 👉 ajoute une image bus ici
+                'assets/images/bus.png',
                 fit: BoxFit.cover,
               ),
             ),
           ),
-
-          // ✅ Contenu
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   const SizedBox(height: 20),
-
-                  // 🔵 Titre
                   const Text(
                     "ESSELAM",
                     style: TextStyle(
@@ -63,7 +50,6 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  // ✅ Carte 1
                   _buildCard(
                     icon: FontAwesomeIcons.bus,
                     title: "Voyagez facilement",
@@ -73,7 +59,6 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ✅ Carte 2
                   _buildCard(
                     icon: FontAwesomeIcons.clock,
                     title: "Gain de temps",
@@ -83,7 +68,7 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ✅ Carte 3
+
                   _buildCard(
                     icon: FontAwesomeIcons.shieldHalved,
                     title: "Sécurité",
@@ -93,7 +78,6 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ✅ Carte 4
                   _buildCard(
                     icon: FontAwesomeIcons.mobileScreen,
                     title: "Simple à utiliser",
@@ -103,7 +87,6 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  // ✅ Bouton commencer
     SizedBox(
     width: double.infinity,
     child: ElevatedButton(
@@ -128,7 +111,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // 🔹 Widget carte info
+
   Widget _buildCard({
     required IconData icon,
     required String title,
@@ -141,7 +124,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha : 0.05),
             blurRadius: 10,
           ),
         ],

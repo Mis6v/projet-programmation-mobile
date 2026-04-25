@@ -61,7 +61,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 16),
 
-          // ✅ Nom dynamique
           Text(
             name,
             style: const TextStyle(
@@ -73,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           const SizedBox(height: 4),
 
-          // ✅ Email dynamique
+
           Text(
             email,
             style: TextStyle(
@@ -103,7 +102,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             );
 
-            // ✅ Mise à jour après retour
             if (result != null) {
               setState(() {
                 name = result['name'];
