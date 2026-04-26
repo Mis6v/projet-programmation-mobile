@@ -4,10 +4,11 @@ import '../models/trip.dart';
 
 class ApiService {
 
-  static const String baseUrl = 'http://10.0.2.2:8080/api';
+  static const String baseUrl = 'http://10.0.2.2:9090/api';
 
 
   static Future<List<Trip>> getAllTrips() async {
+    print("CALL API");
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/trips'),
