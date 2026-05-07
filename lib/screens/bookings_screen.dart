@@ -1,136 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:transport_app/theme/app_theme.dart';
+import 'service/api_service.dart';
 
-class BookingsScreen extends StatelessWidget {
+class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});
 
   @override
+  State<BookingsScreen> createState() => _BookingsScreenState();
+}
+
+class _BookingsScreenState extends State<BookingsScreen> {
+  List<dynamic> bookings = [];
+  bool loading = true;
+
+  final String phone = "22222222"; // remplace par user connecté
+
+  @override
+  void initState() {
+    super.initState();
+    loadBookings();
+  }
+
+  void loadBookings() async {
+    bookings = await ApiService.getBookingsByPhone(phone);
+    setState(() => loading = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Mes Billets'),
-          bottom: const TabBar(
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: AppTheme.secondaryColor,
-            tabs: [
-              Tab(text: 'À venir'),
-              Tab(text: 'Historique'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            _buildUpcomingList(),
-            _buildHistoryList(),
-          ],
-        ),
-      ),
-    );
-  }
+    final upcoming = bookings
+        .where((b) => b['status'] == "CONFIRMED")
+        .toList();
 
-  Widget _buildUpcomingList() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildBookingItem(
-          departure: 'Nouakchoot',
-          destination: 'Boutilimit',
-          date: '28 Mar 2026',
-          time: '08:30',
-          status: 'Confirmé',
-          statusColor: Colors.green,
-        ),
-      ],
-    );
-  }
+    return Scaffold(
+      appBar: AppBar(title: const Text("Mes Billets")),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: upcoming.length,
+        itemBuilder: (context, i) {
+          final b = upcoming[i];
+          final trip = b['trip'];
 
-  Widget _buildHistoryList() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildBookingItem(
-          departure: 'Aleg',
-          destination: 'Nouakchoot',
-          date: '15 Mar 2026',
-          time: '14:00',
-          status: 'Terminé',
-          statusColor: Colors.grey,
-        ),
-        _buildBookingItem(
-          departure: 'Nouakchoot',
-          destination: 'Naima',
-          date: '10 Mar 2026',
-          time: '07:00',
-          status: 'Terminé',
-          statusColor: Colors.grey,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBookingItem({
-    required String departure,
-    required String destination,
-    required String date,
-    required String time,
-    required String status,
-    required Color statusColor,
-  }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  date,
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondaryColor),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    status,
-                    style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+          return Card(
+            child: ListTile(
+              title: Text(
+                "${trip['departureCity']} → ${trip['destinationCity']}",
+              ),
+              subtitle: Text(
+                "Départ: ${trip['departureTime']}\nPlaces: ${b['seatNumbers']}",
+              ),
             ),
-            const Divider(height: 24),
-            Row(
-              children: [
-                const Icon(FontAwesomeIcons.bus, size: 16, color: AppTheme.primaryColor),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '$departure → $destination',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        'Départ à $time',
-                        style: const TextStyle(fontSize: 12, color: AppTheme.textSecondaryColor),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.chevron_right, color: Colors.grey),
-              ],
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

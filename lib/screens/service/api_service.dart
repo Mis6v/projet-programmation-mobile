@@ -3,29 +3,24 @@ import 'package:http/http.dart' as http;
 import '../models/trip.dart';
 
 class ApiService {
-
   static const String baseUrl = 'http://10.0.2.2:9090/api';
 
+  // ================= TRIPS =================
 
   static Future<List<Trip>> getAllTrips() async {
-    print("CALL API");
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/trips'),
-      );
+      final response = await http.get(Uri.parse('$baseUrl/trips'));
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
         return body.map((item) => Trip.fromJson(item)).toList();
-      } else {
-        throw Exception('Erreur serveur');
       }
+      return [];
     } catch (e) {
       print('Erreur getAllTrips: $e');
       return [];
     }
   }
-
 
   static Future<List<Trip>> searchTrips(
       String from,
@@ -33,26 +28,24 @@ class ApiService {
       DateTime date,
       ) async {
     try {
-      final String formattedDate = date.toIso8601String();
-
       final response = await http.get(
         Uri.parse(
-          '$baseUrl/trips/search?from=$from&to=$to&date=$formattedDate',
+          '$baseUrl/trips/search?from=$from&to=$to&date=${date.toIso8601String()}',
         ),
       );
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
         return body.map((item) => Trip.fromJson(item)).toList();
-      } else {
-        throw Exception('Erreur recherche');
       }
+      return [];
     } catch (e) {
       print('Erreur searchTrips: $e');
       return [];
     }
   }
 
+  // ================= BOOKING =================
 
   static Future<bool> createBooking(
       String tripId,
@@ -76,6 +69,24 @@ class ApiService {
     } catch (e) {
       print('Erreur createBooking: $e');
       return false;
+    }
+  }
+
+  // ================= GET BOOKINGS USER =================
+
+  static Future<List<dynamic>> getBookingsByPhone(String phone) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/bookings/user/$phone'),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(utf8.decode(response.bodyBytes));
+      }
+      return [];
+    } catch (e) {
+      print('Erreur getBookingsByPhone: $e');
+      return [];
     }
   }
 }
