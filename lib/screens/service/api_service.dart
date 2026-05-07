@@ -57,7 +57,7 @@ class ApiService {
   static Future<bool> createBooking(
       String tripId,
       String name,
-      String phone,
+      String passengerPhone,
       List<int> seatNumbers,
       ) async {
     try {
@@ -67,7 +67,7 @@ class ApiService {
         body: jsonEncode({
           'tripId': tripId,
           'passengerName': name,
-          'phoneNumber': phone,
+          'passengerPhone': passengerPhone,
           'seatNumbers': seatNumbers,
         }),
       );
