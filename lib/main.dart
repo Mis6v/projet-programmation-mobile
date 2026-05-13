@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:transport_app/screens/home_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
@@ -6,16 +7,15 @@ import 'package:transport_app/screens/search_screen.dart';
 import 'package:transport_app/screens/bookings_screen.dart';
 import 'package:transport_app/screens/profile_screen.dart';
 import 'package:transport_app/screens/Loginscreen.dart';
-void main() {
-  runApp(const TransportApp());
-}
+import 'package:transport_app/controllers/navigation_controller.dart';
+
+void main() => runApp(const TransportApp());
 
 class TransportApp extends StatelessWidget {
   const TransportApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Esselam Transport',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
@@ -24,65 +24,27 @@ class TransportApp extends StatelessWidget {
   }
 }
 
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
-
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const SearchScreen(),
-    const BookingsScreen(),
-    const ProfileScreen(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+class MainNavigation extends StatelessWidget {
+  final String phone;
+  MainNavigation({super.key, required this.phone});
+  final NavigationController navCtrl = Get.put(NavigationController());
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [const HomeScreen(),  SearchScreen(), BookingsScreen(phone: phone), const ProfileScreen()];
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+      body: Obx(() => IndexedStack(index: navCtrl.selectedIndex.value, children: screens)),
+      bottomNavigationBar: Obx(() => BottomNavigationBar(
+        currentIndex: navCtrl.selectedIndex.value,
+        onTap: navCtrl.changeIndex,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppTheme.primaryColor,
-        unselectedItemColor: AppTheme.textSecondaryColor,
-        showUnselectedLabels: true,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.house),
-            label: 'Accueil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.magnifyingGlass),
-            label: 'Recherche',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.ticket),
-            label: 'Mes Billets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.user),
-            label: 'Profil',
-          ),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.house), label: 'Accueil'),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.magnifyingGlass), label: 'Recherche'),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.ticket), label: 'Mes billets'),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.user), label: 'Profil'),
         ],
-      ),
+      )),
     );
   }
 }
-
-

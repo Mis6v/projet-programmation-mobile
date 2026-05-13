@@ -1,81 +1,142 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Seat {
+
   final int id;
-  bool isSelected;
-  bool isBooked;
+
+  RxBool isSelected;
+
+  RxBool isBooked;
 
   Seat({
     required this.id,
-    this.isSelected = false,
-    this.isBooked = false,
-  });
+    bool isSelected = false,
+    bool isBooked = false,
+  })  : isSelected = isSelected.obs,
+        isBooked = isBooked.obs;
 }
 
-class SeatSelectionScreen extends StatefulWidget {
-  @override
-  State<SeatSelectionScreen> createState() => _SeatSelectionScreenState();
-}
+class SeatSelectionScreen extends StatelessWidget {
 
-class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
-  List<Seat> seats = List.generate(
+  SeatSelectionScreen({super.key});
+
+  final RxList<Seat> seats = List.generate(
     12,
         (index) => Seat(id: index + 1),
-  );
+  ).obs;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(title: Text("Choisir les sièges")),
+
+      appBar: AppBar(
+        title: const Text(
+          "Choisir les sièges",
+        ),
+      ),
+
       body: Column(
+
         children: [
+
           Expanded(
+
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+
+              gridDelegate:
+              const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
               ),
+
               itemCount: seats.length,
+
               itemBuilder: (context, index) {
+
                 final seat = seats[index];
 
-                Color color = Colors.blue;
+                return Obx(() {
 
-                if (seat.isBooked) {
-                  color = Colors.grey;
-                } else if (seat.isSelected) {
-                  color = Colors.green;
-                }
+                  Color color = Colors.blue;
 
-                return GestureDetector(
-                  onTap: () {
-                    if (!seat.isBooked) {
-                      setState(() {
-                        seat.isSelected = !seat.isSelected;
-                      });
-                    }
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(8),
+                  if (seat.isBooked.value) {
+
+                    color = Colors.grey;
+
+                  } else if (seat.isSelected.value) {
+
+                    color = Colors.green;
+                  }
+
+                  return GestureDetector(
+
+                    onTap: () {
+
+                      if (!seat.isBooked.value) {
+
+                        seat.isSelected.value =
+                        !seat.isSelected.value;
+                      }
+                    },
+
+                    child: Container(
+
+                      margin: const EdgeInsets.all(6),
+
+                      decoration: BoxDecoration(
+
+                        color: color,
+
+                        borderRadius:
+                        BorderRadius.circular(8),
+                      ),
+
+                      child: Center(
+
+                        child: Text(
+                          "${seat.id}",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Center(child: Text("${seat.id}")),
-                  ),
-                );
+                  );
+                });
               },
             ),
           ),
 
-          ElevatedButton(
-            onPressed: () {
-              final selectedSeats =
-              seats.where((s) => s.isSelected).toList();
+          Padding(
 
-              Navigator.pop(context, selectedSeats);
-            },
-            child: Text("CONFIRMER"),
+            padding: const EdgeInsets.all(16),
+
+            child: SizedBox(
+
+              width: double.infinity,
+
+              child: ElevatedButton(
+
+                onPressed: () {
+
+                  final selectedSeats = seats
+                      .where(
+                        (s) => s.isSelected.value,
+                  )
+                      .toList();
+
+                  Get.back(
+                    result: selectedSeats,
+                  );
+                },
+
+                child: const Text(
+                  "CONFIRMER",
+                ),
+              ),
+            ),
           ),
         ],
       ),

@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
                   const Text(
@@ -94,7 +94,7 @@ class HomeScreen extends StatelessWidget {
     Navigator.push(
     context,
     MaterialPageRoute(
-    builder: (context) => const SearchScreen(),
+    builder: (context) =>  SearchScreen(),
     ),
     );
     },

@@ -5,7 +5,7 @@ import '../models/trip.dart';
 class ApiService {
   static const String baseUrl = 'http://10.0.2.2:9090/api';
 
-  // ================= TRIPS =================
+
 
   static Future<List<Trip>> getAllTrips() async {
     try {
@@ -45,7 +45,6 @@ class ApiService {
     }
   }
 
-  // ================= BOOKING =================
 
   static Future<bool> createBooking(
       String tripId,
@@ -72,12 +71,12 @@ class ApiService {
     }
   }
 
-  // ================= GET BOOKINGS USER =================
 
-  static Future<List<dynamic>> getBookingsByPhone(String phone) async {
+
+  static Future<List<dynamic>> getBookingsByPhone(String passengerPhone) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/bookings/user/$phone'),
+        Uri.parse('$baseUrl/bookings/user/$passengerPhone'),
       );
 
       if (response.statusCode == 200) {

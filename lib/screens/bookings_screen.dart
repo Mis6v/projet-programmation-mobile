@@ -1,61 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/theme/app_theme.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import '../controllers/booking_controller.dart';
 import 'service/api_service.dart';
 
-class BookingsScreen extends StatefulWidget {
-  const BookingsScreen({super.key});
+class BookingsScreen extends StatelessWidget {
+  final String phone;
 
-  @override
-  State<BookingsScreen> createState() => _BookingsScreenState();
-}
+  BookingsScreen({
+    super.key,
+    required this.phone,
+  });
 
-class _BookingsScreenState extends State<BookingsScreen> {
-  List<dynamic> bookings = [];
-  bool loading = true;
-
-  final String phone = "22222222"; // remplace par user connecté
-
-  @override
-  void initState() {
-    super.initState();
-    loadBookings();
-  }
-
-  void loadBookings() async {
-    bookings = await ApiService.getBookingsByPhone(phone);
-    setState(() => loading = false);
-  }
+  final BookingController controller = Get.put(BookingController());
 
   @override
   Widget build(BuildContext context) {
-    final upcoming = bookings
-        .where((b) => b['status'] == "CONFIRMED")
-        .toList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadBookings(phone);
+    });
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Mes Billets")),
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: upcoming.length,
-        itemBuilder: (context, i) {
-          final b = upcoming[i];
-          final trip = b['trip'];
-
-          return Card(
-            child: ListTile(
-              title: Text(
-                "${trip['departureCity']} → ${trip['destinationCity']}",
-              ),
-              subtitle: Text(
-                "Départ: ${trip['departureTime']}\nPlaces: ${b['seatNumbers']}",
-              ),
-            ),
-          );
-        },
+      appBar: AppBar(
+        title: const Text("Mes billets"),
       ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final confirmedBookings = controller.confirmedBookings;
+
+        if (confirmedBookings.isEmpty) {
+          return const Center(
+            child: Text("Aucun billet trouvé"),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: confirmedBookings.length,
+          itemBuilder: (context, index) {
+            final booking = confirmedBookings[index];
+            final trip = booking['trip'];
+
+            return Card(
+              child: ListTile(
+                title: Text(
+                  "${trip['departureCity']} → ${trip['destinationCity']}",
+                ),
+                subtitle: Text(
+                  "Départ : ${trip['departureTime']}\n"
+                      "Places : ${booking['seatNumbers']}",
+                ),
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 }

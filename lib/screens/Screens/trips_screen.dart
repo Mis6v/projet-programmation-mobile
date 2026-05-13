@@ -24,24 +24,23 @@ class TripsScreen extends StatelessWidget {
         future: ApiService.getAllTrips(),
         builder: (context, snapshot) {
 
-          // ⏳ loading
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // ❌ erreur API
+
           if (snapshot.hasError) {
             return Center(child: Text('Erreur: ${snapshot.error}'));
           }
 
-          // 📭 pas de données
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Aucun voyage disponible'));
           }
 
           final trips = snapshot.data!;
 
-          // ✅ filtrage propre
+
           final filteredTrips = trips.where((trip) {
             return trip.departureCity.trim().toLowerCase() ==
                 departure.trim().toLowerCase() &&
@@ -50,12 +49,12 @@ class TripsScreen extends StatelessWidget {
                 trip.availableSeats >= seats.length;
           }).toList();
 
-          // 🚫 aucun résultat
+
           if (filteredTrips.isEmpty) {
             return const Center(child: Text('Aucun voyage trouvé'));
           }
 
-          // ✅ affichage
+
           return ListView.builder(
             itemCount: filteredTrips.length,
             itemBuilder: (context, index) {
