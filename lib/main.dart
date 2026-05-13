@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/screens/home_screen.dart';
+import 'package:transport_app/screens/Screens/home%20screen/home_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
-import 'package:transport_app/screens/search_screen.dart';
-import 'package:transport_app/screens/bookings_screen.dart';
-import 'package:transport_app/screens/profile_screen.dart';
-import 'package:transport_app/screens/Loginscreen.dart';
+import 'package:transport_app/screens/Screens/search%20screen/parent%20screen/search_screen.dart';
+import 'package:transport_app/screens/Screens/bookings%20screen/parent%20screen/bookings_screen.dart';
+import 'package:transport_app/screens/Screens/profile%20screen/parent%20screen/profile_screen.dart';
+import 'package:transport_app/screens/Screens/login%20screen/Loginscreen.dart';
 void main() {
   runApp(const TransportApp());
 }

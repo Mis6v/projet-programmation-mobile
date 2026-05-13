@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:transport_app/screens/service/SeatSelectionScreen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
-import 'Screens/trips_screen.dart';
+import '../trips_screen.dart';
 
 
 class SearchScreen extends StatefulWidget {

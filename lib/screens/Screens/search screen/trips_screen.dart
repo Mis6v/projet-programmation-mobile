@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../booking_screen.dart';
-import '../models/trip.dart';
+import '../bookings screen/booking_screen.dart';
+import '../../models/trip.dart';
 import 'package:intl/intl.dart';
-import '../service/api_service.dart';
+import '../../service/api_service.dart';
 
 class TripsScreen extends StatelessWidget {
   final String departure;

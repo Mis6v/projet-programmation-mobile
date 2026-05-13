@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:transport_app/theme/app_theme.dart';
-import 'service/api_service.dart';
+import '../../../service/api_service.dart';
 
 class BookingsScreen extends StatefulWidget {
   const BookingsScreen({super.key});

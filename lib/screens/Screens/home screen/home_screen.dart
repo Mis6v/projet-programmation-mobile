@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/screens/search_screen.dart';
+import 'package:transport_app/screens/Screens/search%20screen/parent%20screen/search_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
 

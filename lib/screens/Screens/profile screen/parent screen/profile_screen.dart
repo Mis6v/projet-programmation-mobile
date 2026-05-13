@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
-import 'EditProfileScreen.dart';
-import 'NotificationScreen.dart';
-import 'PaymentScreen.dart';
-import 'SupportScreen.dart';
+import '../EditProfileScreen.dart';
+import '../NotificationScreen.dart';
+import '../PaymentScreen.dart';
+import '../SupportScreen.dart';
 
 
 class ProfileScreen extends StatefulWidget {
