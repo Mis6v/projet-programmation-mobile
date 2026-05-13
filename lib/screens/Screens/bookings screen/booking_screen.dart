@@ -9,7 +9,7 @@ import 'package:transport_app/screens/service/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
 import 'confirmation_screen.dart';
-import 'models/trip.dart';
+import '../../models/trip.dart';
 
 class BookingScreen extends StatelessWidget {
   final Trip trip;

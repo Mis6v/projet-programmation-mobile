@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'models/trip.dart';
+import '../../models/trip.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final Trip trip;
