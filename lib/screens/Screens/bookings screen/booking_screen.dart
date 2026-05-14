@@ -7,6 +7,9 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:transport_app/screens/service/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
+import 'package:get/get.dart';
+import '../../../controllers/price_controller.dart';
+
 
 import 'confirmation_screen.dart';
 import '../../models/trip.dart';
@@ -25,6 +28,7 @@ class BookingScreen extends StatelessWidget {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final RxBool _isLoading = false.obs;
+  final PriceController priceController = Get.put(PriceController());
 
   Future<void> _onConfirm() async {
     if (!_formKey.currentState!.validate()) return;
@@ -34,6 +38,11 @@ class BookingScreen extends StatelessWidget {
     final List<int> seatNumbers = seats
         .map((s) => int.parse(s.id.toString()))
         .toList();
+    priceController.calculatePrice(
+      totalDistance: 500,
+      userDistance: 250,
+      fullPrice: trip.price,
+    );
 
     final success = await ApiService.createBooking(
       trip.id,
@@ -215,7 +224,9 @@ class BookingScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Prix'),
-            Text('${trip.price} MRU'),
+            Obx(() => Text(
+              '${priceController.price.value.toStringAsFixed(0)} MRU',
+            ))
           ],
         ),
         const SizedBox(height: 8),
