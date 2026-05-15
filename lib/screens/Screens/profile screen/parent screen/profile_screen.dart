@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:transport_app/screens/Screens/role%20selection/role_selection_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
 import '../EditProfileScreen.dart';
 import '../NotificationScreen.dart';
 import '../PaymentScreen.dart';
 import '../SupportScreen.dart';
-
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,7 +17,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   String name = "Moustapha taleb";
   String email = "tafataleb21@email.com";
 
@@ -60,7 +60,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Icon(Icons.person, size: 60, color: AppTheme.primaryColor),
           ),
           const SizedBox(height: 16),
-
           Text(
             name,
             style: const TextStyle(
@@ -69,10 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 4),
-
-
           Text(
             email,
             style: TextStyle(
@@ -90,8 +86,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          _buildMenuItem(FontAwesomeIcons.userPen, 'Modifier le profil', () async {
-
+          _buildMenuItem(FontAwesomeIcons.userPen, 'Modifier le profil',
+              () async {
             final result = await Navigator.push(
               context,
               MaterialPageRoute(
@@ -108,19 +104,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 email = result['email'];
               });
             }
-
           }),
-
           _buildMenuItem(FontAwesomeIcons.creditCard, 'Moyens de paiement', () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const PaymentScreen()));
           }),
-
           _buildMenuItem(FontAwesomeIcons.bell, 'Notifications', () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const NotificationScreen()));
           }),
-
           _buildMenuItem(FontAwesomeIcons.circleQuestion, 'Aide & Support', () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const SupportScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const SupportScreen()));
           }),
         ],
       ),
@@ -140,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: TextButton(
-        onPressed: () {},
+        onPressed: () => Get.offAll(() => const RoleSelectionScreen()),
         style: TextButton.styleFrom(
           foregroundColor: Colors.red,
           padding: const EdgeInsets.symmetric(vertical: 16),

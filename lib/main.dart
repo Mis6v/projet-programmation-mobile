@@ -6,7 +6,7 @@ import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/screens/Screens/search%20screen/parent%20screen/search_screen.dart';
 import 'package:transport_app/screens/Screens/bookings%20screen/parent%20screen/bookings_screen.dart';
 import 'package:transport_app/screens/Screens/profile%20screen/parent%20screen/profile_screen.dart';
-import 'package:transport_app/screens/Screens/login%20screen/Loginscreen.dart';
+import 'package:transport_app/screens/Screens/role%20selection/role_selection_screen.dart';
 import 'package:transport_app/controllers/navigation_controller.dart';
 
 void main() => runApp(const TransportApp());
@@ -19,7 +19,7 @@ class TransportApp extends StatelessWidget {
       title: 'Esselam Transport',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const LoginScreen(),
+      home: const RoleSelectionScreen(),
     );
   }
 }

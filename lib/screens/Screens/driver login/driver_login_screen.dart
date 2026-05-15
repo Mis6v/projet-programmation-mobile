@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:transport_app/screens/Screens/driver%20main/driver_main_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/widgets/auth_form_card.dart';
 
-import '../../../main.dart';
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class DriverLoginScreen extends StatefulWidget {
+  const DriverLoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<DriverLoginScreen> createState() => _DriverLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _DriverLoginScreenState extends State<DriverLoginScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final _phoneController = TextEditingController();
-
-  final _codeController = TextEditingController();
+  final _pinController = TextEditingController();
 
   void _login() {
     if (_formKey.currentState!.validate()) {
       Get.offAll(
-        () => MainNavigation(
-          phone: _phoneController.text,
-        ),
+        () => DriverMainScreen(phone: _phoneController.text),
       );
     }
   }
@@ -33,9 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _phoneController.dispose();
-
-    _codeController.dispose();
-
+    _pinController.dispose();
     super.dispose();
   }
 
@@ -43,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Connexion'),
+        title: const Text('Connexion chauffeur'),
       ),
       body: Stack(
         children: [
@@ -64,28 +57,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
                     AuthFormCard(
-                      icon: FontAwesomeIcons.user,
-                      title: 'Bienvenue',
+                      icon: FontAwesomeIcons.idCard,
+                      title: 'Connexion chauffeur',
                       description:
-                          'Connectez-vous à l\'aide de votre numéro de téléphone et du code qui vous a été envoyé.',
+                          'Entrez votre numero de telephone et votre PIN chauffeur pour acceder a votre espace.',
                       children: [
                         MauritaniaPhoneField(
                           controller: _phoneController,
-                          labelText: 'Numero',
+                          labelText: 'Numero de telephone',
                         ),
                         const SizedBox(height: 18),
                         PinField(
-                          controller: _codeController,
-                          labelText: 'Code',
+                          controller: _pinController,
+                          labelText: 'PIN chauffeur',
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton(
                           onPressed: _login,
-                          child: const Text(
-                            'SE CONNECTER',
-                          ),
+                          child: const Text('ACCEDER A MON ESPACE'),
                         ),
                       ],
                     ),
