@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import '../models/trip.dart';
+import '../models/trip_tracking.dart';
 
 class ApiService {
   static const String baseUrl = 'http://localhost:9090/api';
@@ -15,7 +17,7 @@ class ApiService {
       }
       return [];
     } catch (e) {
-      print('Erreur getAllTrips: $e');
+      log('Erreur getAllTrips', error: e);
       return [];
     }
   }
@@ -38,7 +40,7 @@ class ApiService {
       }
       return [];
     } catch (e) {
-      print('Erreur searchTrips: $e');
+      log('Erreur searchTrips', error: e);
       return [];
     }
   }
@@ -63,7 +65,7 @@ class ApiService {
 
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
-      print('Erreur createBooking: $e');
+      log('Erreur createBooking', error: e);
       return false;
     }
   }
@@ -79,8 +81,44 @@ class ApiService {
       }
       return [];
     } catch (e) {
-      print('Erreur getBookingsByPhone: $e');
+      log('Erreur getBookingsByPhone', error: e);
       return [];
+    }
+  }
+
+  static Future<List<Trip>> getDriverTripsByPhone(String phone) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/drivers/phone/$phone/trips'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
+        return body.map((item) => Trip.fromJson(item)).toList();
+      }
+      return [];
+    } catch (e) {
+      log('Erreur getDriverTripsByPhone', error: e);
+      return [];
+    }
+  }
+
+  static Future<TripTracking?> trackTrip(String tripNumber) async {
+    try {
+      final cleanTripNumber = Uri.encodeComponent(tripNumber.trim());
+      final response = await http.get(
+        Uri.parse('$baseUrl/trips/track/$cleanTripNumber'),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> body =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        return TripTracking.fromJson(body);
+      }
+      return null;
+    } catch (e) {
+      log('Erreur trackTrip', error: e);
+      return null;
     }
   }
 }

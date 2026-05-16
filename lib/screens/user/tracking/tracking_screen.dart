@@ -1,24 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:transport_app/models/trip_tracking.dart';
+import 'package:transport_app/services/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
-class TrackingScreen extends StatelessWidget {
+class TrackingScreen extends StatefulWidget {
   const TrackingScreen({super.key});
 
   @override
+  State<TrackingScreen> createState() => _TrackingScreenState();
+}
+
+class _TrackingScreenState extends State<TrackingScreen> {
+  final TextEditingController _tripNumberController =
+      TextEditingController(text: 'TRIP-1001');
+
+  TripTracking? _tracking;
+  bool _isLoading = false;
+  String? _message;
+
+  @override
+  void dispose() {
+    _tripNumberController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _searchTrip() async {
+    final tripNumber = _tripNumberController.text.trim();
+
+    if (tripNumber.isEmpty) {
+      setState(() {
+        _message = 'Entrez le numéro du trajet';
+        _tracking = null;
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _message = null;
+    });
+
+    final tracking = await ApiService.trackTrip(tripNumber);
+
+    if (!mounted) return;
+
+    setState(() {
+      _tracking = tracking;
+      _isLoading = false;
+      _message = tracking == null ? 'Aucun trajet trouvé avec ce numéro' : null;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const progress = 0.58;
+    final tracking = _tracking;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Suivi du trajet'),
       ),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Rechercher un trajet',
               style: TextStyle(
                 fontSize: 22,
@@ -26,19 +74,33 @@ class TrackingScreen extends StatelessWidget {
                 color: AppTheme.textPrimaryColor,
               ),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Entrez le numéro du trajet pour suivre la position du bus.',
               style: TextStyle(color: AppTheme.textSecondaryColor),
             ),
-            SizedBox(height: 20),
-            _TripSearchCard(),
-            SizedBox(height: 24),
-            _TrackingMapCard(progress: progress),
-            SizedBox(height: 20),
-            _TripProgressCard(progress: progress),
-            SizedBox(height: 20),
-            _TrackingDetailsCard(),
+            const SizedBox(height: 20),
+            _TripSearchCard(
+              controller: _tripNumberController,
+              isLoading: _isLoading,
+              onSearch: _searchTrip,
+            ),
+            if (_message != null) ...[
+              const SizedBox(height: 14),
+              _MessageBox(message: _message!),
+            ],
+            const SizedBox(height: 24),
+            if (_isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (tracking == null)
+              const _EmptyTrackingCard()
+            else ...[
+              _TrackingMapCard(tracking: tracking),
+              const SizedBox(height: 20),
+              _TripProgressCard(tracking: tracking),
+              const SizedBox(height: 20),
+              _TrackingDetailsCard(tracking: tracking),
+            ],
           ],
         ),
       ),
@@ -47,7 +109,15 @@ class TrackingScreen extends StatelessWidget {
 }
 
 class _TripSearchCard extends StatelessWidget {
-  const _TripSearchCard();
+  final TextEditingController controller;
+  final bool isLoading;
+  final VoidCallback onSearch;
+
+  const _TripSearchCard({
+    required this.controller,
+    required this.isLoading,
+    required this.onSearch,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +137,9 @@ class _TripSearchCard extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
+              controller: controller,
+              textInputAction: TextInputAction.search,
+              onSubmitted: (_) => onSearch(),
               decoration: InputDecoration(
                 hintText: 'Ex: TRIP-1001',
                 prefixIcon: const Icon(FontAwesomeIcons.hashtag, size: 16),
@@ -87,8 +160,14 @@ class _TripSearchCard extends StatelessWidget {
           SizedBox(
             height: 48,
             child: ElevatedButton(
-              onPressed: () {},
-              child: const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
+              onPressed: isLoading ? null : onSearch,
+              child: isLoading
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(FontAwesomeIcons.magnifyingGlass, size: 16),
             ),
           ),
         ],
@@ -98,9 +177,9 @@ class _TripSearchCard extends StatelessWidget {
 }
 
 class _TrackingMapCard extends StatelessWidget {
-  final double progress;
+  final TripTracking tracking;
 
-  const _TrackingMapCard({required this.progress});
+  const _TrackingMapCard({required this.tracking});
 
   @override
   Widget build(BuildContext context) {
@@ -124,23 +203,23 @@ class _TrackingMapCard extends StatelessWidget {
           children: [
             Positioned.fill(
               child: CustomPaint(
-                painter: _TrackingMapPainter(progress: progress),
+                painter: _TrackingMapPainter(progress: tracking.progressValue),
               ),
             ),
-            const Positioned(
+            Positioned(
               left: 18,
               top: 18,
               child: _MapBadge(
                 icon: FontAwesomeIcons.route,
-                text: 'TRIP-1001',
+                text: tracking.tripNumber,
               ),
             ),
-            const Positioned(
+            Positioned(
               right: 18,
               top: 18,
               child: _MapBadge(
                 icon: FontAwesomeIcons.satelliteDish,
-                text: 'En direct',
+                text: _statusLabel(tracking.status),
               ),
             ),
           ],
@@ -256,9 +335,9 @@ class _TrackingMapPainter extends CustomPainter {
 }
 
 class _TripProgressCard extends StatelessWidget {
-  final double progress;
+  final TripTracking tracking;
 
-  const _TripProgressCard({required this.progress});
+  const _TripProgressCard({required this.tracking});
 
   @override
   Widget build(BuildContext context) {
@@ -285,10 +364,10 @@ class _TripProgressCard extends StatelessWidget {
                 size: 18,
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Rosso vers Nouakchott',
-                  style: TextStyle(
+                  '${tracking.departureCity} vers ${tracking.destinationCity}',
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.textPrimaryColor,
@@ -296,7 +375,7 @@ class _TripProgressCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '${(progress * 100).round()}%',
+                '${tracking.progressPercentage.round()}%',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppTheme.secondaryColor,
@@ -308,7 +387,7 @@ class _TripProgressCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
-              value: progress,
+              value: tracking.progressValue,
               minHeight: 9,
               backgroundColor: AppTheme.backgroundColor,
               valueColor: const AlwaysStoppedAnimation<Color>(
@@ -317,11 +396,14 @@ class _TripProgressCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _StopLabel(title: 'Départ', city: 'Rosso'),
-              _StopLabel(title: 'Arrivée estimée', city: 'Nouakchott'),
+              _StopLabel(title: 'Départ', city: tracking.departureCity),
+              _StopLabel(
+                title: 'Arrivée estimée',
+                city: tracking.destinationCity,
+              ),
             ],
           ),
         ],
@@ -331,10 +413,14 @@ class _TripProgressCard extends StatelessWidget {
 }
 
 class _TrackingDetailsCard extends StatelessWidget {
-  const _TrackingDetailsCard();
+  final TripTracking tracking;
+
+  const _TrackingDetailsCard({required this.tracking});
 
   @override
   Widget build(BuildContext context) {
+    final formatter = DateFormat('dd/MM/yyyy HH:mm');
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -347,26 +433,111 @@ class _TrackingDetailsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
           _DetailRow(
             icon: FontAwesomeIcons.clock,
             label: 'Dernière mise à jour',
-            value: 'Il y a 2 min',
+            value: tracking.lastLocationUpdate == null
+                ? 'Non disponible'
+                : formatter.format(tracking.lastLocationUpdate!),
           ),
-          Divider(height: 24),
+          const Divider(height: 24),
           _DetailRow(
             icon: FontAwesomeIcons.locationDot,
             label: 'Position actuelle',
-            value: 'En route vers Nouakchott',
+            value: tracking.currentLatitude == null
+                ? 'En attente de signal'
+                : '${tracking.currentLatitude!.toStringAsFixed(4)}, '
+                    '${tracking.currentLongitude!.toStringAsFixed(4)}',
           ),
-          Divider(height: 24),
+          const Divider(height: 24),
           _DetailRow(
             icon: FontAwesomeIcons.userTie,
             label: 'Chauffeur',
-            value: 'Ahmed Salem',
+            value: tracking.driverName ?? 'Non assigné',
+          ),
+          const Divider(height: 24),
+          _DetailRow(
+            icon: FontAwesomeIcons.bus,
+            label: 'Véhicule',
+            value: [
+              tracking.vehicleName,
+              tracking.vehiclePlate,
+            ].whereType<String>().join(' - '),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _EmptyTrackingCard extends StatelessWidget {
+  const _EmptyTrackingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: const Column(
+        children: [
+          Icon(
+            FontAwesomeIcons.locationCrosshairs,
+            size: 34,
+            color: AppTheme.primaryColor,
+          ),
+          SizedBox(height: 14),
+          Text(
+            'Suivi prêt',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimaryColor,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Recherchez un numéro de trajet pour voir la progression du bus.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppTheme.textSecondaryColor),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MessageBox extends StatelessWidget {
+  final String message;
+
+  const _MessageBox({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.secondaryColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        message,
+        style: const TextStyle(
+          color: AppTheme.textPrimaryColor,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -480,7 +651,7 @@ class _DetailRow extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               Text(
-                value,
+                value.isEmpty ? 'Non disponible' : value,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppTheme.textPrimaryColor,
@@ -491,5 +662,18 @@ class _DetailRow extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+String _statusLabel(String status) {
+  switch (status) {
+    case 'IN_PROGRESS':
+      return 'En direct';
+    case 'ARRIVED':
+      return 'Arrivé';
+    case 'CANCELLED':
+      return 'Annulé';
+    default:
+      return 'Programmé';
   }
 }
