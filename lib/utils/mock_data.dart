@@ -1,6 +1,4 @@
-
-
-import '../screens/models/trip.dart';
+import '../models/trip.dart';
 
 class MockData {
   static List<Trip> getPopularTrips() {

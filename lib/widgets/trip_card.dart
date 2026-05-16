@@ -3,8 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
-
-import '../screens/models/trip.dart';
+import '../models/trip.dart';
 
 class TripCard extends StatelessWidget {
   final Trip trip;
@@ -19,7 +18,6 @@ class TripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timeFormat = DateFormat('HH:mm');
-
 
     final duration = trip.arrivalTime.difference(trip.departureTime);
     final durationText =
@@ -54,9 +52,7 @@ class TripCard extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 16),
-
               Row(
                 children: [
                   Column(
@@ -71,13 +67,13 @@ class TripCard extends StatelessWidget {
                           style: const TextStyle(fontSize: 12)),
                     ],
                   ),
-
                   Expanded(
                     child: Column(
                       children: [
                         Row(
                           children: [
-                            const Expanded(child: Divider(indent: 10, endIndent: 10)),
+                            const Expanded(
+                                child: Divider(indent: 10, endIndent: 10)),
                             Icon(
                               trip.transportType == 'Bus'
                                   ? FontAwesomeIcons.bus
@@ -85,7 +81,8 @@ class TripCard extends StatelessWidget {
                               size: 16,
                               color: AppTheme.textSecondaryColor,
                             ),
-                            const Expanded(child: Divider(indent: 10, endIndent: 10)),
+                            const Expanded(
+                                child: Divider(indent: 10, endIndent: 10)),
                           ],
                         ),
                         Text(
@@ -98,7 +95,6 @@ class TripCard extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   Column(
                     children: [
                       Text(
@@ -113,9 +109,7 @@ class TripCard extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 12),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -127,8 +121,7 @@ class TripCard extends StatelessWidget {
                       Text(
                         '${trip.availableSeats} places libres',
                         style: const TextStyle(
-                            fontSize: 12,
-                            color: AppTheme.textSecondaryColor),
+                            fontSize: 12, color: AppTheme.textSecondaryColor),
                       ),
                     ],
                   ),

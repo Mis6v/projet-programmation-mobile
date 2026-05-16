@@ -13,7 +13,8 @@ class SupportScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
-            Text('Pour toute aide, contactez-nous :', style: TextStyle(fontSize: 16)),
+            Text('Pour toute aide, contactez-nous :',
+                style: TextStyle(fontSize: 16)),
             SizedBox(height: 10),
             Text('Email: EsselamTransport@gmail.com'),
             Text('WhatsApp: 42382182'),

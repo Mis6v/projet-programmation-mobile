@@ -21,7 +21,6 @@ class Trip {
     required this.companyName,
   });
 
-
   factory Trip.fromJson(Map<String, dynamic> json) {
     return Trip(
       id: json['id'].toString(),
@@ -35,7 +34,6 @@ class Trip {
       companyName: json['companyName'] ?? 'Esselam',
     );
   }
-
 
   Map<String, dynamic> toJson() {
     return {

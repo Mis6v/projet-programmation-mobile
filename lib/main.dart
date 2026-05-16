@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/screens/Screens/home%20screen/home_screen.dart';
-import 'package:transport_app/theme/app_theme.dart';
-import 'package:transport_app/screens/Screens/search%20screen/parent%20screen/search_screen.dart';
-import 'package:transport_app/screens/Screens/bookings%20screen/parent%20screen/bookings_screen.dart';
-import 'package:transport_app/screens/Screens/profile%20screen/parent%20screen/profile_screen.dart';
-import 'package:transport_app/screens/Screens/role%20selection/role_selection_screen.dart';
 import 'package:transport_app/controllers/navigation_controller.dart';
+import 'package:transport_app/screens/shared/role_selection_screen.dart';
+import 'package:transport_app/screens/user/bookings/bookings_screen.dart';
+import 'package:transport_app/screens/user/home/home_screen.dart';
+import 'package:transport_app/screens/user/profile/profile_screen.dart';
+import 'package:transport_app/screens/user/search/search_screen.dart';
+import 'package:transport_app/theme/app_theme.dart';
 
 void main() => runApp(const TransportApp());
 

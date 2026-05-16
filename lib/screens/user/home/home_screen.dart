@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/screens/Screens/search%20screen/parent%20screen/search_screen.dart';
+import 'package:transport_app/screens/user/search/search_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
-
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -37,9 +36,7 @@ class HomeScreen extends StatelessWidget {
                       letterSpacing: 2,
                     ),
                   ),
-
                   const SizedBox(height: 10),
-
                   const Text(
                     "Transport fiable et sécurisé",
                     style: TextStyle(
@@ -47,61 +44,49 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.grey,
                     ),
                   ),
-
                   const SizedBox(height: 40),
-
                   _buildCard(
                     icon: FontAwesomeIcons.bus,
                     title: "Voyagez facilement",
                     description:
-                    "Réservez vos billets de transport en quelques clics sans vous déplacer.",
+                        "Réservez vos billets de transport en quelques clics sans vous déplacer.",
                   ),
-
                   const SizedBox(height: 20),
-
                   _buildCard(
                     icon: FontAwesomeIcons.clock,
                     title: "Gain de temps",
                     description:
-                    "Consultez les horaires et choisissez le voyage qui vous convient.",
+                        "Consultez les horaires et choisissez le voyage qui vous convient.",
                   ),
-
                   const SizedBox(height: 20),
-
-
                   _buildCard(
                     icon: FontAwesomeIcons.shieldHalved,
                     title: "Sécurité",
                     description:
-                    "Voyagez avec des compagnies fiables comme Esselam.",
+                        "Voyagez avec des compagnies fiables comme Esselam.",
                   ),
-
                   const SizedBox(height: 20),
-
                   _buildCard(
                     icon: FontAwesomeIcons.mobileScreen,
                     title: "Simple à utiliser",
                     description:
-                    "Une application claire et facile pour tous les utilisateurs.",
+                        "Une application claire et facile pour tous les utilisateurs.",
                   ),
-
                   const SizedBox(height: 40),
-
-    SizedBox(
-    width: double.infinity,
-    child: ElevatedButton(
-    onPressed: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) =>  SearchScreen(),
-    ),
-    );
-    },
-    child: const Text("COMMENCER"),
-    ),
-    ),
-
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text("COMMENCER"),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -110,7 +95,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildCard({
     required IconData icon,
@@ -124,7 +108,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha : 0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
           ),
         ],
@@ -133,7 +117,6 @@ class HomeScreen extends StatelessWidget {
         children: [
           Icon(icon, color: AppTheme.primaryColor, size: 28),
           const SizedBox(width: 16),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,9 +128,7 @@ class HomeScreen extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   description,
                   style: const TextStyle(color: Colors.grey),

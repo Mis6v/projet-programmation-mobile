@@ -16,7 +16,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController nameController;
@@ -46,11 +45,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           key: _formKey,
           child: Column(
             children: [
-
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Nom'),
-
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return "Le nom est obligatoire";
@@ -58,11 +55,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return null;
                 },
               ),
-
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
-
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "L'email est obligatoire";
@@ -75,21 +70,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   return null;
                 },
               ),
-
               const SizedBox(height: 20),
-
               ElevatedButton(
                 onPressed: () {
-
                   if (_formKey.currentState!.validate()) {
-
                     Navigator.pop(context, {
                       'name': nameController.text,
                       'email': emailController.text,
                     });
-
                   }
-
                 },
                 child: const Text("Enregistrer"),
               )

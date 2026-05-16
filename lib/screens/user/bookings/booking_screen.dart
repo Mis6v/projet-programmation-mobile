@@ -5,11 +5,11 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:transport_app/screens/service/api_service.dart';
+import 'package:transport_app/models/trip.dart';
+import 'package:transport_app/services/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
 import 'confirmation_screen.dart';
-import '../../models/trip.dart';
 
 class BookingScreen extends StatelessWidget {
   final Trip trip;
@@ -31,9 +31,8 @@ class BookingScreen extends StatelessWidget {
 
     _isLoading.value = true;
 
-    final List<int> seatNumbers = seats
-        .map((s) => int.parse(s.id.toString()))
-        .toList();
+    final List<int> seatNumbers =
+        seats.map((s) => int.parse(s.id.toString())).toList();
 
     final success = await ApiService.createBooking(
       trip.id,
@@ -112,11 +111,11 @@ class BookingScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 55,
                 child: Obx(() => ElevatedButton(
-                  onPressed: _isLoading.value ? null : _onConfirm,
-                  child: _isLoading.value
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('CONFIRMER LA RÉSERVATION'),
-                )),
+                      onPressed: _isLoading.value ? null : _onConfirm,
+                      child: _isLoading.value
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text('CONFIRMER LA RÉSERVATION'),
+                    )),
               ),
             ],
           ),

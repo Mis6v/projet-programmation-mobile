@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:transport_app/screens/Screens/driver%20main/driver_main_screen.dart';
+import 'package:transport_app/screens/driver/main/driver_main_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 import 'package:transport_app/widgets/auth_form_card.dart';
 

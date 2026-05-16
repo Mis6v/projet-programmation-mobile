@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:transport_app/screens/Screens/driver%20login/driver_login_screen.dart';
-import 'package:transport_app/screens/Screens/login%20screen/Loginscreen.dart';
+import 'package:transport_app/screens/driver/login/driver_login_screen.dart';
+import 'package:transport_app/screens/user/auth/login_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
 class RoleSelectionScreen extends StatelessWidget {

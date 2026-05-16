@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:transport_app/screens/Screens/driver%20home/driver_home_screen.dart';
-import 'package:transport_app/screens/Screens/my%20recorded%20trips/my_recorded_trips_screen.dart';
-import 'package:transport_app/screens/Screens/profile%20screen/parent%20screen/profile_screen.dart';
+import 'package:transport_app/screens/driver/home/driver_home_screen.dart';
+import 'package:transport_app/screens/driver/trips/my_recorded_trips_screen.dart';
+import 'package:transport_app/screens/user/profile/profile_screen.dart';
 
 class DriverMainScreen extends StatefulWidget {
   final String phone;

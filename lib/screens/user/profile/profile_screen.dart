@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:transport_app/screens/Screens/role%20selection/role_selection_screen.dart';
+import 'package:transport_app/screens/shared/role_selection_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
-import '../EditProfileScreen.dart';
-import '../NotificationScreen.dart';
-import '../PaymentScreen.dart';
-import '../SupportScreen.dart';
+import 'edit_profile_screen.dart';
+import 'notification_screen.dart';
+import 'payment_screen.dart';
+import 'support_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:transport_app/screens/service/api_service.dart';
+import 'package:transport_app/services/api_service.dart';
 
 class BookingController extends GetxController {
   var bookings = <dynamic>[].obs;
@@ -15,5 +15,7 @@ class BookingController extends GetxController {
     }
   }
 
-  List<dynamic> get confirmedBookings => bookings.where((b) => b['status'].toString().toUpperCase() == "CONFIRMED").toList();
+  List<dynamic> get confirmedBookings => bookings
+      .where((b) => b['status'].toString().toUpperCase() == "CONFIRMED")
+      .toList();
 }

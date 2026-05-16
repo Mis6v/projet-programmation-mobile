@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../bookings screen/booking_screen.dart';
-import '../../models/trip.dart';
 import 'package:intl/intl.dart';
-import '../../service/api_service.dart';
+import 'package:transport_app/models/trip.dart';
+import 'package:transport_app/screens/user/bookings/booking_screen.dart';
+import 'package:transport_app/services/api_service.dart';
 
 class TripsScreen extends StatelessWidget {
   final String departure;
@@ -23,12 +23,9 @@ class TripsScreen extends StatelessWidget {
       body: FutureBuilder<List<Trip>>(
         future: ApiService.getAllTrips(),
         builder: (context, snapshot) {
-
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
 
           if (snapshot.hasError) {
             return Center(child: Text('Erreur: ${snapshot.error}'));
@@ -40,20 +37,17 @@ class TripsScreen extends StatelessWidget {
 
           final trips = snapshot.data!;
 
-
           final filteredTrips = trips.where((trip) {
             return trip.departureCity.trim().toLowerCase() ==
-                departure.trim().toLowerCase() &&
+                    departure.trim().toLowerCase() &&
                 trip.destinationCity.trim().toLowerCase() ==
                     destination.trim().toLowerCase() &&
                 trip.availableSeats >= seats.length;
           }).toList();
 
-
           if (filteredTrips.isEmpty) {
             return const Center(child: Text('Aucun voyage trouvé'));
           }
-
 
           return ListView.builder(
             itemCount: filteredTrips.length,
@@ -61,12 +55,13 @@ class TripsScreen extends StatelessWidget {
               final trip = filteredTrips[index];
 
               final departureFormatted =
-              DateFormat('dd/MM/yyyy HH:mm').format(trip.departureTime);
+                  DateFormat('dd/MM/yyyy HH:mm').format(trip.departureTime);
 
               return Card(
                 margin: const EdgeInsets.all(10),
                 child: ListTile(
-                  title: Text('${trip.departureCity} → ${trip.destinationCity}'),
+                  title:
+                      Text('${trip.departureCity} → ${trip.destinationCity}'),
                   subtitle: Text('Départ: $departureFormatted'),
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
