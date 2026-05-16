@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:transport_app/models/trip_tracking.dart';
 import 'package:transport_app/services/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
@@ -183,8 +185,25 @@ class _TrackingMapCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final departure = LatLng(
+      tracking.departureLatitude,
+      tracking.departureLongitude,
+    );
+    final destination = LatLng(
+      tracking.destinationLatitude,
+      tracking.destinationLongitude,
+    );
+    final busPosition = LatLng(
+      tracking.currentLatitude ?? tracking.departureLatitude,
+      tracking.currentLongitude ?? tracking.departureLongitude,
+    );
+    final mapCenter = LatLng(
+      (departure.latitude + destination.latitude) / 2,
+      (departure.longitude + destination.longitude) / 2,
+    );
+
     return Container(
-      height: 280,
+      height: 320,
       width: double.infinity,
       decoration: BoxDecoration(
         color: const Color(0xFFEAF2F8),
@@ -202,8 +221,49 @@ class _TrackingMapCard extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: CustomPaint(
-                painter: _TrackingMapPainter(progress: tracking.progressValue),
+              child: FlutterMap(
+                options: MapOptions(
+                  initialCenter: mapCenter,
+                  initialZoom: 7,
+                  minZoom: 5,
+                  maxZoom: 18,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.transport.transport_app',
+                  ),
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: [departure, busPosition, destination],
+                        color: AppTheme.secondaryColor,
+                        strokeWidth: 5,
+                      ),
+                    ],
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      _buildMarker(
+                        point: departure,
+                        icon: FontAwesomeIcons.locationDot,
+                        color: AppTheme.primaryColor,
+                      ),
+                      _buildMarker(
+                        point: destination,
+                        icon: FontAwesomeIcons.flagCheckered,
+                        color: AppTheme.accentColor,
+                      ),
+                      _buildMarker(
+                        point: busPosition,
+                        icon: FontAwesomeIcons.bus,
+                        color: AppTheme.secondaryColor,
+                        size: 46,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             Positioned(
@@ -222,115 +282,42 @@ class _TrackingMapCard extends StatelessWidget {
                 text: _statusLabel(tracking.status),
               ),
             ),
+            Positioned(
+              left: 18,
+              right: 18,
+              bottom: 18,
+              child: _MapDistanceBadge(tracking: tracking),
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-class _TrackingMapPainter extends CustomPainter {
-  final double progress;
-
-  _TrackingMapPainter({required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final roadPaint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 18
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-
-    final progressPaint = Paint()
-      ..color = AppTheme.secondaryColor
-      ..strokeWidth = 8
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-
-    final gridPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.45)
-      ..strokeWidth = 1;
-
-    for (var x = 28.0; x < size.width; x += 58) {
-      canvas.drawLine(Offset(x, 0), Offset(x + 36, size.height), gridPaint);
-    }
-    for (var y = 34.0; y < size.height; y += 62) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y - 28), gridPaint);
-    }
-
-    final route = Path()
-      ..moveTo(36, size.height - 54)
-      ..cubicTo(
-        size.width * 0.24,
-        size.height * 0.72,
-        size.width * 0.34,
-        size.height * 0.36,
-        size.width * 0.52,
-        size.height * 0.48,
-      )
-      ..cubicTo(
-        size.width * 0.72,
-        size.height * 0.62,
-        size.width * 0.72,
-        size.height * 0.18,
-        size.width - 38,
-        54,
-      );
-
-    canvas.drawPath(route, roadPaint);
-
-    final metric = route.computeMetrics().first;
-    final progressPath = metric.extractPath(0, metric.length * progress);
-    canvas.drawPath(progressPath, progressPaint);
-
-    final start = Offset(36, size.height - 54);
-    final end = Offset(size.width - 38, 54);
-    final busPosition =
-        metric.getTangentForOffset(metric.length * progress)!.position;
-
-    _drawStop(canvas, start, AppTheme.primaryColor);
-    _drawStop(canvas, end, AppTheme.accentColor);
-    _drawBus(canvas, busPosition);
-  }
-
-  void _drawStop(Canvas canvas, Offset offset, Color color) {
-    final outer = Paint()..color = Colors.white;
-    final inner = Paint()..color = color;
-    canvas.drawCircle(offset, 14, outer);
-    canvas.drawCircle(offset, 8, inner);
-  }
-
-  void _drawBus(Canvas canvas, Offset offset) {
-    final shadow = Paint()..color = Colors.black.withValues(alpha: 0.14);
-    final body = Paint()..color = AppTheme.primaryColor;
-    final window = Paint()..color = Colors.white;
-
-    final busRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: offset, width: 46, height: 30),
-      const Radius.circular(8),
-    );
-
-    canvas.drawRRect(busRect.shift(const Offset(0, 3)), shadow);
-    canvas.drawRRect(busRect, body);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: offset.translate(0, -3),
-          width: 30,
-          height: 9,
+  Marker _buildMarker({
+    required LatLng point,
+    required IconData icon,
+    required Color color,
+    double size = 38,
+  }) {
+    return Marker(
+      point: point,
+      width: size,
+      height: size,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.16),
+              blurRadius: 8,
+            ),
+          ],
         ),
-        const Radius.circular(4),
+        child: Icon(icon, color: color, size: size * 0.42),
       ),
-      window,
     );
-    canvas.drawCircle(offset.translate(-13, 13), 4, window);
-    canvas.drawCircle(offset.translate(13, 13), 4, window);
-  }
-
-  @override
-  bool shouldRepaint(covariant _TrackingMapPainter oldDelegate) {
-    return oldDelegate.progress != progress;
   }
 }
 
@@ -450,6 +437,12 @@ class _TrackingDetailsCard extends StatelessWidget {
                 ? 'En attente de signal'
                 : '${tracking.currentLatitude!.toStringAsFixed(4)}, '
                     '${tracking.currentLongitude!.toStringAsFixed(4)}',
+          ),
+          const Divider(height: 24),
+          _DetailRow(
+            icon: FontAwesomeIcons.road,
+            label: 'Distance restante estimée',
+            value: _remainingDistanceText(tracking),
           ),
           const Divider(height: 24),
           _DetailRow(
@@ -579,6 +572,76 @@ class _MapBadge extends StatelessWidget {
   }
 }
 
+class _MapDistanceBadge extends StatelessWidget {
+  final TripTracking tracking;
+
+  const _MapDistanceBadge({required this.tracking});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.94),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: AppTheme.secondaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              FontAwesomeIcons.road,
+              color: AppTheme.secondaryColor,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Distance restante',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.textSecondaryColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _remainingDistanceText(tracking),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textPrimaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Text(
+            'approx.',
+            style: TextStyle(
+              fontSize: 11,
+              color: AppTheme.textSecondaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _StopLabel extends StatelessWidget {
   final String title;
   final String city;
@@ -676,4 +739,23 @@ String _statusLabel(String status) {
     default:
       return 'Programmé';
   }
+}
+
+String _remainingDistanceText(TripTracking tracking) {
+  if (tracking.currentLatitude == null || tracking.currentLongitude == null) {
+    return 'En attente de position GPS';
+  }
+
+  const distance = Distance();
+  final kilometers = distance.as(
+    LengthUnit.Kilometer,
+    LatLng(tracking.currentLatitude!, tracking.currentLongitude!),
+    LatLng(tracking.destinationLatitude, tracking.destinationLongitude),
+  );
+
+  if (kilometers < 1) {
+    return '${(kilometers * 1000).round()} m';
+  }
+
+  return '${kilometers.toStringAsFixed(1)} km';
 }

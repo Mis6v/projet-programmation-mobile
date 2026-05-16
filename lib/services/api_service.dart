@@ -121,4 +121,35 @@ class ApiService {
       return null;
     }
   }
+
+  static Future<TripTracking?> updateTripLocation({
+    required String tripNumber,
+    required double latitude,
+    required double longitude,
+    double? progressPercentage,
+  }) async {
+    try {
+      final cleanTripNumber = Uri.encodeComponent(tripNumber.trim());
+      final response = await http.put(
+        Uri.parse('$baseUrl/trips/track/$cleanTripNumber/location'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'currentLatitude': latitude,
+          'currentLongitude': longitude,
+          if (progressPercentage != null)
+            'progressPercentage': progressPercentage,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> body =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        return TripTracking.fromJson(body);
+      }
+      return null;
+    } catch (e) {
+      log('Erreur updateTripLocation', error: e);
+      return null;
+    }
+  }
 }
