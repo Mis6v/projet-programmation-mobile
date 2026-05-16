@@ -7,6 +7,7 @@ import 'package:transport_app/screens/user/bookings/bookings_screen.dart';
 import 'package:transport_app/screens/user/home/home_screen.dart';
 import 'package:transport_app/screens/user/profile/profile_screen.dart';
 import 'package:transport_app/screens/user/search/search_screen.dart';
+import 'package:transport_app/screens/user/tracking/tracking_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
 void main() => runApp(const TransportApp());
@@ -34,6 +35,7 @@ class MainNavigation extends StatelessWidget {
     final List<Widget> screens = [
       const HomeScreen(),
       SearchScreen(),
+      const TrackingScreen(),
       BookingsScreen(phone: phone),
       const ProfileScreen()
     ];
@@ -50,6 +52,9 @@ class MainNavigation extends StatelessWidget {
               BottomNavigationBarItem(
                   icon: Icon(FontAwesomeIcons.magnifyingGlass),
                   label: 'Recherche'),
+              BottomNavigationBarItem(
+                  icon: Icon(FontAwesomeIcons.locationCrosshairs),
+                  label: 'Suivi'),
               BottomNavigationBarItem(
                   icon: Icon(FontAwesomeIcons.ticket), label: 'Mes billets'),
               BottomNavigationBarItem(
