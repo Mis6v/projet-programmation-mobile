@@ -5,7 +5,7 @@ import '../models/trip.dart';
 import '../models/trip_tracking.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:9090/api';
+  static const String baseUrl = 'http://10.0.2.2:8080/api';
 
   static Future<List<Trip>> getAllTrips() async {
     try {
