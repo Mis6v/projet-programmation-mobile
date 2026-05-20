@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }),
       );
 
-      final result = response.body;
+      final result = response.body.trim();
 
       if (result == "SUCCESS") {
 
