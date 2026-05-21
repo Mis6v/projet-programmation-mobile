@@ -42,6 +42,7 @@ class BookingsScreen extends StatelessWidget {
           itemCount: confirmedBookings.length,
           itemBuilder: (context, index) {
             final booking = confirmedBookings[index];
+            print("BOOKING = $booking");
             final trip = booking['trip'];
 
             return Card(
