@@ -214,13 +214,15 @@ class SearchScreen extends StatelessWidget {
                   );
 
                   Get.to(
-                    () => TripsScreen(
+                        () => TripsScreen(
                       departure: controller.departureCity.value,
                       destination: controller.destinationCity.value,
                       seats: controller.selectedSeats,
+                      date: controller.selectedDate.value,
                     ),
                   );
                 },
+
                 child: const Text(
                   'TROUVER UN VOYAGE',
                 ),

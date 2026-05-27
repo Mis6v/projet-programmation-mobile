@@ -8,12 +8,14 @@ class TripsScreen extends StatelessWidget {
   final String departure;
   final String destination;
   final List<dynamic> seats;
+  final DateTime date;
 
   const TripsScreen({
     super.key,
     required this.departure,
     required this.destination,
     required this.seats,
+    required this.date,
   });
 
   @override
@@ -37,12 +39,26 @@ class TripsScreen extends StatelessWidget {
 
           final trips = snapshot.data!;
 
+          final selectedDate = DateTime(
+            date.year,
+            date.month,
+            date.day,
+          );
+
           final filteredTrips = trips.where((trip) {
+            final tripDate = DateTime(
+              trip.departureTime.year,
+              trip.departureTime.month,
+              trip.departureTime.day,
+            );
+
             return trip.departureCity.trim().toLowerCase() ==
-                    departure.trim().toLowerCase() &&
+                departure.trim().toLowerCase() &&
                 trip.destinationCity.trim().toLowerCase() ==
                     destination.trim().toLowerCase() &&
-                trip.availableSeats >= seats.length;
+                trip.availableSeats >= seats.length &&
+                (tripDate.isAtSameMomentAs(selectedDate) ||
+                    tripDate.isAfter(selectedDate));
           }).toList();
 
           if (filteredTrips.isEmpty) {
