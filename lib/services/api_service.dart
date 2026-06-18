@@ -121,6 +121,55 @@ class ApiService {
       return null;
     }
   }
+  static Future<TripTracking?> getPublicTracking(
+      String token,
+      ) async {
+
+    try {
+
+      final response = await http.get(
+        Uri.parse(
+          '$baseUrl/trips/public/$token',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+
+        return TripTracking.fromJson(
+          jsonDecode(response.body),
+        );
+      }
+
+      return null;
+
+    } catch (e) {
+
+      return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> generateShareLink(
+      String tripNumber,
+      ) async {
+
+    try {
+
+      final response = await http.post(
+        Uri.parse(
+          '$baseUrl/trips/track/$tripNumber/share',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+
+      return null;
+
+    } catch (e) {
+      return null;
+    }
+  }
 
   static Future<TripTracking?> updateTripLocation({
     required String tripNumber,

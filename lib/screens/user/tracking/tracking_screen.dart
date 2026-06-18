@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:transport_app/models/trip_tracking.dart';
 import 'package:transport_app/services/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
+import 'package:share_plus/share_plus.dart';
 
 class TrackingScreen extends StatefulWidget {
   const TrackingScreen({super.key});
@@ -102,6 +103,11 @@ class _TrackingScreenState extends State<TrackingScreen> {
               _TripProgressCard(tracking: tracking),
               const SizedBox(height: 20),
               _TrackingDetailsCard(tracking: tracking),
+                const SizedBox(height: 20),
+
+                ShareTripButton(
+                  tripNumber: tracking.tripNumber,
+                ),
             ],
           ],
         ),
@@ -531,6 +537,44 @@ class _MessageBox extends StatelessWidget {
           color: AppTheme.textPrimaryColor,
           fontWeight: FontWeight.w600,
         ),
+      ),
+    );
+  }
+}
+class ShareTripButton extends StatelessWidget {
+  final String tripNumber;
+
+  const ShareTripButton({
+    super.key,
+    required this.tripNumber,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        icon: const Icon(Icons.share),
+        label: const Text('Partager le suivi'),
+        onPressed: () async {
+          final result =
+          await ApiService.generateShareLink(tripNumber);
+
+          if (result == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Impossible de générer le lien',
+                ),
+              ),
+            );
+            return;
+          }
+
+          await Share.share(
+            result['url'],
+          );
+        },
       ),
     );
   }
