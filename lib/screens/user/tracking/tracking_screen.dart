@@ -572,7 +572,7 @@ class ShareTripButton extends StatelessWidget {
           }
 
           await SharePlus.instance.share(
-            ShareParams(text: result['url']?.toString() ?? ''),
+            result['url'],
           );
         },
       ),
