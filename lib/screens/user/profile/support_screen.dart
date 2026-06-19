@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SupportScreen extends StatelessWidget {
@@ -8,11 +7,11 @@ class SupportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Aide & Support')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+      body: const Padding(
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text('Pour toute aide, contactez-nous :',
                 style: TextStyle(fontSize: 16)),
             SizedBox(height: 10),

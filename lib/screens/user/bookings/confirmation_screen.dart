@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:transport_app/models/trip.dart';
@@ -15,7 +14,7 @@ class ConfirmationScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle, size: 100, color: Colors.green),
+            const Icon(Icons.check_circle, size: 100, color: Colors.green),
             const SizedBox(height: 20),
             Text(
                 "Votre voyage de ${trip.departureCity} à ${trip.destinationCity} est confirmé !"),

@@ -18,7 +18,6 @@ class AppTheme {
         primary: primaryColor,
         secondary: secondaryColor,
         surface: Colors.white,
-        background: backgroundColor,
       ),
       scaffoldBackgroundColor: backgroundColor,
       textTheme: GoogleFonts.poppinsTextTheme().copyWith(

@@ -1,26 +1,72 @@
 import 'dart:convert';
 import 'dart:developer';
+
 import 'package:http/http.dart' as http;
+
+import '../models/booking.dart';
+import '../models/driver.dart';
 import '../models/trip.dart';
 import '../models/trip_tracking.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8080/api';
+  static const String baseUrl = 'http://localhost:9090/api';
+  static const String authBaseUrl = 'http://localhost:9090/auth';
 
-  static Future<List<Trip>> getAllTrips() async {
+  static Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
+      };
+
+  static dynamic _decode(http.Response response) {
+    if (response.body.isEmpty) return null;
+    return jsonDecode(utf8.decode(response.bodyBytes));
+  }
+
+  static bool _isSuccess(http.Response response) {
+    return response.statusCode >= 200 && response.statusCode < 300;
+  }
+
+  static Future<String> login(String telephone, String code) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/trips'));
-
-      if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
-        return body.map((item) => Trip.fromJson(item)).toList();
-      }
-      return [];
+      final response = await http.post(
+        Uri.parse('$authBaseUrl/login'),
+        headers: _headers,
+        body: jsonEncode({'telephone': telephone, 'code': code}),
+      );
+      return response.body.trim();
     } catch (e) {
-      log('Erreur getAllTrips', error: e);
-      return [];
+      log('Erreur login', error: e);
+      return 'SERVER_ERROR';
     }
   }
+
+  static Future<String> register(String telephone, String code) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$authBaseUrl/register'),
+        headers: _headers,
+        body: jsonEncode({'telephone': telephone, 'code': code}),
+      );
+      return response.body.trim();
+    } catch (e) {
+      log('Erreur register', error: e);
+      return 'SERVER_ERROR';
+    }
+  }
+
+  static Future<List<Trip>> getTrips() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/trips'));
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
+        return body.map((item) => Trip.fromJson(item)).toList();
+      }
+    } catch (e) {
+      log('Erreur getTrips', error: e);
+    }
+    return [];
+  }
+
+  static Future<List<Trip>> getAllTrips() => getTrips();
 
   static Future<List<Trip>> searchTrips(
     String from,
@@ -28,79 +74,32 @@ class ApiService {
     DateTime date,
   ) async {
     try {
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/trips/search?from=$from&to=$to&date=${date.toIso8601String()}',
-        ),
+      final uri = Uri.parse('$baseUrl/trips/search').replace(
+        queryParameters: {
+          'from': from,
+          'to': to,
+          'date': date.toIso8601String(),
+        },
       );
-
-      if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
+      final response = await http.get(uri);
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
         return body.map((item) => Trip.fromJson(item)).toList();
       }
-      return [];
     } catch (e) {
       log('Erreur searchTrips', error: e);
-      return [];
     }
+    return [];
   }
 
-  static Future<bool> createBooking(
-    String tripId,
-    String name,
-    String passengerPhone,
-    List<int> seatNumbers,
-  ) async {
+  static Future<Trip?> getTripById(String id) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/bookings'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'tripId': tripId,
-          'passengerName': name,
-          'passengerPhone': passengerPhone,
-          'seatNumbers': seatNumbers,
-        }),
-      );
-
-      return response.statusCode == 200 || response.statusCode == 201;
+      final response = await http.get(Uri.parse('$baseUrl/trips/$id'));
+      if (_isSuccess(response)) return Trip.fromJson(_decode(response));
     } catch (e) {
-      log('Erreur createBooking', error: e);
-      return false;
+      log('Erreur getTripById', error: e);
     }
-  }
-
-  static Future<List<dynamic>> getBookingsByPhone(String passengerPhone) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/bookings/user/$passengerPhone'),
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(utf8.decode(response.bodyBytes));
-      }
-      return [];
-    } catch (e) {
-      log('Erreur getBookingsByPhone', error: e);
-      return [];
-    }
-  }
-
-  static Future<List<Trip>> getDriverTripsByPhone(String phone) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/drivers/phone/$phone/trips'),
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
-        return body.map((item) => Trip.fromJson(item)).toList();
-      }
-      return [];
-    } catch (e) {
-      log('Erreur getDriverTripsByPhone', error: e);
-      return [];
-    }
+    return null;
   }
 
   static Future<TripTracking?> trackTrip(String tripNumber) async {
@@ -109,66 +108,11 @@ class ApiService {
       final response = await http.get(
         Uri.parse('$baseUrl/trips/track/$cleanTripNumber'),
       );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> body =
-            jsonDecode(utf8.decode(response.bodyBytes));
-        return TripTracking.fromJson(body);
-      }
-      return null;
+      if (_isSuccess(response)) return TripTracking.fromJson(_decode(response));
     } catch (e) {
       log('Erreur trackTrip', error: e);
-      return null;
     }
-  }
-  static Future<TripTracking?> getPublicTracking(
-      String token,
-      ) async {
-
-    try {
-
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/trips/public/$token',
-        ),
-      );
-
-      if (response.statusCode == 200) {
-
-        return TripTracking.fromJson(
-          jsonDecode(response.body),
-        );
-      }
-
-      return null;
-
-    } catch (e) {
-
-      return null;
-    }
-  }
-
-  static Future<Map<String, dynamic>?> generateShareLink(
-      String tripNumber,
-      ) async {
-
-    try {
-
-      final response = await http.post(
-        Uri.parse(
-          '$baseUrl/trips/track/$tripNumber/share',
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      }
-
-      return null;
-
-    } catch (e) {
-      return null;
-    }
+    return null;
   }
 
   static Future<TripTracking?> updateTripLocation({
@@ -181,7 +125,7 @@ class ApiService {
       final cleanTripNumber = Uri.encodeComponent(tripNumber.trim());
       final response = await http.put(
         Uri.parse('$baseUrl/trips/track/$cleanTripNumber/location'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: jsonEncode({
           'currentLatitude': latitude,
           'currentLongitude': longitude,
@@ -189,16 +133,252 @@ class ApiService {
             'progressPercentage': progressPercentage,
         }),
       );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> body =
-            jsonDecode(utf8.decode(response.bodyBytes));
-        return TripTracking.fromJson(body);
-      }
-      return null;
+      if (_isSuccess(response)) return TripTracking.fromJson(_decode(response));
     } catch (e) {
       log('Erreur updateTripLocation', error: e);
-      return null;
     }
+    return null;
+  }
+
+  static Future<Map<String, dynamic>?> generateShareLink(
+    String tripNumber,
+  ) async {
+    try {
+      final cleanTripNumber = Uri.encodeComponent(tripNumber.trim());
+      final response = await http.post(
+        Uri.parse('$baseUrl/trips/track/$cleanTripNumber/share'),
+      );
+      if (_isSuccess(response)) return _decode(response);
+    } catch (e) {
+      log('Erreur generateShareLink', error: e);
+    }
+    return null;
+  }
+
+  static Future<TripTracking?> getPublicTracking(String token) async {
+    try {
+      final response =
+          await http.get(Uri.parse('$baseUrl/trips/public/$token'));
+      if (_isSuccess(response)) return TripTracking.fromJson(_decode(response));
+    } catch (e) {
+      log('Erreur getPublicTracking', error: e);
+    }
+    return null;
+  }
+
+  static Future<bool> createBooking(
+    String tripId,
+    String name,
+    String passengerPhone,
+    List<int> seatNumbers,
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/bookings'),
+        headers: _headers,
+        body: jsonEncode({
+          'tripId': tripId,
+          'passengerName': name,
+          'passengerPhone': passengerPhone,
+          'seatNumbers': seatNumbers,
+        }),
+      );
+      return _isSuccess(response);
+    } catch (e) {
+      log('Erreur createBooking', error: e);
+      return false;
+    }
+  }
+
+  static Future<List<dynamic>> getBookingsByPhone(String passengerPhone) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/bookings/user/$passengerPhone'),
+      );
+      if (_isSuccess(response)) return _decode(response) as List<dynamic>;
+    } catch (e) {
+      log('Erreur getBookingsByPhone', error: e);
+    }
+    return [];
+  }
+
+  static Future<List<Booking>> getBookingModelsByPhone(String phone) async {
+    final bookings = await getBookingsByPhone(phone);
+    return bookings
+        .whereType<Map<String, dynamic>>()
+        .map(Booking.fromJson)
+        .toList();
+  }
+
+  static Future<Booking?> getBookingById(String id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/bookings/$id'));
+      if (_isSuccess(response)) return Booking.fromJson(_decode(response));
+    } catch (e) {
+      log('Erreur getBookingById', error: e);
+    }
+    return null;
+  }
+
+  static Future<List<Driver>> getDrivers() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/drivers'));
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
+        return body.map((item) => Driver.fromJson(item)).toList();
+      }
+    } catch (e) {
+      log('Erreur getDrivers', error: e);
+    }
+    return [];
+  }
+
+  static Future<Driver?> getDriverByPhone(String phone) async {
+    try {
+      final response =
+          await http.get(Uri.parse('$baseUrl/drivers/phone/$phone'));
+      if (_isSuccess(response)) return Driver.fromJson(_decode(response));
+    } catch (e) {
+      log('Erreur getDriverByPhone', error: e);
+    }
+    return null;
+  }
+
+  static Future<List<Trip>> getDriverTripsByPhone(String phone) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/drivers/phone/$phone/trips'),
+      );
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
+        return body.map((item) => Trip.fromJson(item)).toList();
+      }
+    } catch (e) {
+      log('Erreur getDriverTripsByPhone', error: e);
+    }
+    return [];
+  }
+
+  static Future<List<Trip>> getDriverTrips(String driverId) async {
+    try {
+      final response =
+          await http.get(Uri.parse('$baseUrl/drivers/$driverId/trips'));
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
+        return body.map((item) => Trip.fromJson(item)).toList();
+      }
+    } catch (e) {
+      log('Erreur getDriverTrips', error: e);
+    }
+    return [];
+  }
+
+  static Future<List<Driver>> getAdminDrivers() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/admin/drivers'));
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
+        return body.map((item) => Driver.fromJson(item)).toList();
+      }
+    } catch (e) {
+      log('Erreur getAdminDrivers', error: e);
+    }
+    return [];
+  }
+
+  static Future<Driver> createAdminDriver(DriverRequest request) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/admin/drivers'),
+      headers: _headers,
+      body: jsonEncode(request.toJson()),
+    );
+    if (!_isSuccess(response)) throw Exception('Driver create failed');
+    return Driver.fromJson(_decode(response));
+  }
+
+  static Future<Driver> updateAdminDriver(
+    String id,
+    DriverRequest request,
+  ) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/admin/drivers/$id'),
+      headers: _headers,
+      body: jsonEncode(request.toJson()),
+    );
+    if (!_isSuccess(response)) throw Exception('Driver update failed');
+    return Driver.fromJson(_decode(response));
+  }
+
+  static Future<void> deleteAdminDriver(String id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/admin/drivers/$id'));
+    if (!_isSuccess(response)) throw Exception('Driver delete failed');
+  }
+
+  static Future<List<Trip>> getAdminDriverTrips(String id) async {
+    try {
+      final response =
+          await http.get(Uri.parse('$baseUrl/admin/drivers/$id/trips'));
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
+        return body.map((item) => Trip.fromJson(item)).toList();
+      }
+    } catch (e) {
+      log('Erreur getAdminDriverTrips', error: e);
+    }
+    return [];
+  }
+
+  static Future<List<Trip>> getAdminTrips() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/admin/trips'));
+      if (_isSuccess(response)) {
+        final body = _decode(response) as List<dynamic>;
+        return body.map((item) => Trip.fromJson(item)).toList();
+      }
+    } catch (e) {
+      log('Erreur getAdminTrips', error: e);
+    }
+    return [];
+  }
+
+  static Future<Trip> createAdminTrip(TripRequest request) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/admin/trips'),
+      headers: _headers,
+      body: jsonEncode(request.toJson()),
+    );
+    if (!_isSuccess(response)) throw Exception('Trip create failed');
+    return Trip.fromJson(_decode(response));
+  }
+
+  static Future<Trip> updateAdminTrip(String id, TripRequest request) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/admin/trips/$id'),
+      headers: _headers,
+      body: jsonEncode(request.toJson()),
+    );
+    if (!_isSuccess(response)) throw Exception('Trip update failed');
+    return Trip.fromJson(_decode(response));
+  }
+
+  static Future<void> deleteAdminTrip(String id) async {
+    final response = await http.delete(Uri.parse('$baseUrl/admin/trips/$id'));
+    if (!_isSuccess(response)) throw Exception('Trip delete failed');
+  }
+
+  static Future<Trip> assignDriverToTrip(String tripId, String driverId) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/admin/trips/$tripId/driver/$driverId'),
+    );
+    if (!_isSuccess(response)) throw Exception('Driver assign failed');
+    return Trip.fromJson(_decode(response));
+  }
+
+  static Future<Trip> removeDriverFromTrip(String tripId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/admin/trips/$tripId/driver'),
+    );
+    if (!_isSuccess(response)) throw Exception('Driver remove failed');
+    return Trip.fromJson(_decode(response));
   }
 }

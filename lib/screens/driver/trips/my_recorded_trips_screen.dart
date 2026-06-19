@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:transport_app/models/trip.dart';
+import 'package:transport_app/screens/driver/tracking/driver_tracking_screen.dart';
 import 'package:transport_app/services/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
@@ -124,6 +125,23 @@ class MyRecordedTripsScreen extends StatelessWidget {
                         text: 'Statut : ${trip.status}',
                       ),
                     ],
+                    const SizedBox(height: 14),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DriverTrackingScreen(trip: trip),
+                            ),
+                          );
+                        },
+                        icon: const Icon(FontAwesomeIcons.locationCrosshairs,
+                            size: 14),
+                        label: const Text('Start tracking'),
+                      ),
+                    ),
                   ],
                 ),
               );

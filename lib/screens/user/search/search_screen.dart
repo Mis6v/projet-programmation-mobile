@@ -197,24 +197,8 @@ class SearchScreen extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  print(
-                    'Departure: ${controller.departureCity.value}',
-                  );
-
-                  print(
-                    'Destination: ${controller.destinationCity.value}',
-                  );
-
-                  print(
-                    'Date: ${controller.selectedDate.value}',
-                  );
-
-                  print(
-                    'Passengers: ${controller.passengerCount.value}',
-                  );
-
                   Get.to(
-                        () => TripsScreen(
+                    () => TripsScreen(
                       departure: controller.departureCity.value,
                       destination: controller.destinationCity.value,
                       seats: controller.selectedSeats,
@@ -222,7 +206,6 @@ class SearchScreen extends StatelessWidget {
                     ),
                   );
                 },
-
                 child: const Text(
                   'TROUVER UN VOYAGE',
                 ),

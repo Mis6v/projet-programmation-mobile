@@ -103,11 +103,10 @@ class _TrackingScreenState extends State<TrackingScreen> {
               _TripProgressCard(tracking: tracking),
               const SizedBox(height: 20),
               _TrackingDetailsCard(tracking: tracking),
-                const SizedBox(height: 20),
-
-                ShareTripButton(
-                  tripNumber: tracking.tripNumber,
-                ),
+              const SizedBox(height: 20),
+              ShareTripButton(
+                tripNumber: tracking.tripNumber,
+              ),
             ],
           ],
         ),
@@ -541,6 +540,7 @@ class _MessageBox extends StatelessWidget {
     );
   }
 }
+
 class ShareTripButton extends StatelessWidget {
   final String tripNumber;
 
@@ -557,10 +557,10 @@ class ShareTripButton extends StatelessWidget {
         icon: const Icon(Icons.share),
         label: const Text('Partager le suivi'),
         onPressed: () async {
-          final result =
-          await ApiService.generateShareLink(tripNumber);
+          final result = await ApiService.generateShareLink(tripNumber);
 
           if (result == null) {
+            if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
@@ -571,8 +571,8 @@ class ShareTripButton extends StatelessWidget {
             return;
           }
 
-          await Share.share(
-            result['url'],
+          await SharePlus.instance.share(
+            ShareParams(text: result['url']?.toString() ?? ''),
           );
         },
       ),

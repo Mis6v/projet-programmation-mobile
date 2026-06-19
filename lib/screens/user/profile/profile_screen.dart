@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             email,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               fontSize: 14,
             ),
           ),

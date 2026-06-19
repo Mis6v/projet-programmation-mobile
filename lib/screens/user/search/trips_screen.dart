@@ -23,7 +23,7 @@ class TripsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Résultats')),
       body: FutureBuilder<List<Trip>>(
-        future: ApiService.getAllTrips(),
+        future: ApiService.searchTrips(departure, destination, date),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -37,29 +37,9 @@ class TripsScreen extends StatelessWidget {
             return const Center(child: Text('Aucun voyage disponible'));
           }
 
-          final trips = snapshot.data!;
-
-          final selectedDate = DateTime(
-            date.year,
-            date.month,
-            date.day,
-          );
-
-          final filteredTrips = trips.where((trip) {
-            final tripDate = DateTime(
-              trip.departureTime.year,
-              trip.departureTime.month,
-              trip.departureTime.day,
-            );
-
-            return trip.departureCity.trim().toLowerCase() ==
-                departure.trim().toLowerCase() &&
-                trip.destinationCity.trim().toLowerCase() ==
-                    destination.trim().toLowerCase() &&
-                trip.availableSeats >= seats.length &&
-                (tripDate.isAtSameMomentAs(selectedDate) ||
-                    tripDate.isAfter(selectedDate));
-          }).toList();
+          final filteredTrips = snapshot.data!
+              .where((trip) => trip.availableSeats >= seats.length)
+              .toList();
 
           if (filteredTrips.isEmpty) {
             return const Center(child: Text('Aucun voyage trouvé'));

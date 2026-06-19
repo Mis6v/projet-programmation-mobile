@@ -1,8 +1,6 @@
 import 'package:get/get.dart';
 
-
 class SearchTripController extends GetxController {
-
   var departureCity = 'Nouakchott'.obs;
   var destinationCity = 'Aleg'.obs;
 
@@ -13,9 +11,7 @@ class SearchTripController extends GetxController {
   var selectedSeats = <dynamic>[].obs;
 
   void setDeparture(String city) {
-
     if (city == destinationCity.value) {
-
       Get.snackbar(
         'Erreur',
         'Choisissez une ville différente',
@@ -28,9 +24,7 @@ class SearchTripController extends GetxController {
   }
 
   void setDestination(String city) {
-
     if (city == departureCity.value) {
-
       Get.snackbar(
         'Erreur',
         'Choisissez une ville différente',
@@ -47,7 +41,6 @@ class SearchTripController extends GetxController {
   }
 
   void setSeats(List<dynamic> seats) {
-
     selectedSeats.value = seats;
 
     passengerCount.value = seats.length;

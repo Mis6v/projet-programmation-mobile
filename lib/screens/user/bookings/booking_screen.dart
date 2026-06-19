@@ -221,8 +221,8 @@ class BookingScreen extends StatelessWidget {
         const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Frais'),
-            const Text('200 MRU'),
+            Text('Frais'),
+            Text('200 MRU'),
           ],
         ),
         const Divider(),
