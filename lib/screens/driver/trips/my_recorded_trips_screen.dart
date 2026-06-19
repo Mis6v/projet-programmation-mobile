@@ -6,13 +6,43 @@ import 'package:transport_app/screens/driver/tracking/driver_tracking_screen.dar
 import 'package:transport_app/services/api_service.dart';
 import 'package:transport_app/theme/app_theme.dart';
 
-class MyRecordedTripsScreen extends StatelessWidget {
+class MyRecordedTripsScreen extends StatefulWidget {
   final String phone;
 
   const MyRecordedTripsScreen({
     super.key,
     required this.phone,
   });
+
+  @override
+  State<MyRecordedTripsScreen> createState() => _MyRecordedTripsScreenState();
+}
+
+class _MyRecordedTripsScreenState extends State<MyRecordedTripsScreen> {
+  late Future<List<Trip>> _tripsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTrips();
+  }
+
+  void _loadTrips() {
+    _tripsFuture = ApiService.getDriverTripsByPhone(widget.phone);
+  }
+
+  Future<void> _openTracking(Trip trip) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DriverTrackingScreen(trip: trip),
+      ),
+    );
+
+    if (mounted) {
+      setState(_loadTrips);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +53,7 @@ class MyRecordedTripsScreen extends StatelessWidget {
         title: const Text('Mes trajets'),
       ),
       body: FutureBuilder<List<Trip>>(
-        future: ApiService.getDriverTripsByPhone(phone),
+        future: _tripsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -129,17 +159,10 @@ class MyRecordedTripsScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerRight,
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => DriverTrackingScreen(trip: trip),
-                            ),
-                          );
-                        },
+                        onPressed: () => _openTracking(trip),
                         icon: const Icon(FontAwesomeIcons.locationCrosshairs,
                             size: 14),
-                        label: const Text('Start tracking'),
+                        label: const Text('Démarrer le trajet'),
                       ),
                     ),
                   ],

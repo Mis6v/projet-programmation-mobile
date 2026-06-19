@@ -361,6 +361,32 @@ class ApiService {
     return Trip.fromJson(_decode(response));
   }
 
+  static Future<Trip> startTrip(Trip trip) {
+    return updateAdminTrip(
+      trip.id,
+      TripRequest(
+        tripNumber: trip.tripNumber ?? '',
+        driverId: trip.driver?.id,
+        departureCity: trip.departureCity,
+        destinationCity: trip.destinationCity,
+        departureTime: trip.departureTime,
+        arrivalTime: trip.arrivalTime,
+        price: trip.price,
+        transportType: trip.transportType,
+        availableSeats: trip.availableSeats,
+        companyName: trip.companyName,
+        status: 'IN_PROGRESS',
+        progressPercentage: trip.progressPercentage ?? 0,
+        departureLatitude: trip.departureLatitude ?? 0,
+        departureLongitude: trip.departureLongitude ?? 0,
+        destinationLatitude: trip.destinationLatitude ?? 0,
+        destinationLongitude: trip.destinationLongitude ?? 0,
+        currentLatitude: trip.currentLatitude ?? trip.departureLatitude ?? 0,
+        currentLongitude: trip.currentLongitude ?? trip.departureLongitude ?? 0,
+      ),
+    );
+  }
+
   static Future<void> deleteAdminTrip(String id) async {
     final response = await http.delete(Uri.parse('$baseUrl/admin/trips/$id'));
     if (!_isSuccess(response)) throw Exception('Trip delete failed');
