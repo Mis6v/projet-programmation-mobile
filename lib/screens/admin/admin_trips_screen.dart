@@ -62,6 +62,20 @@ class _AdminTripsScreenState extends State<AdminTripsScreen> {
       ),
     );
     if (selected == null) return;
+
+    final validationError = await _validateDriverAssignment(
+      trip: trip,
+      driver: selected,
+    );
+    if (validationError != null) {
+      Get.snackbar(
+        'Erreur',
+        validationError,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     try {
       await ApiService.assignDriverToTrip(trip.id, selected.id);
       if (mounted) setState(_load);
@@ -69,6 +83,47 @@ class _AdminTripsScreenState extends State<AdminTripsScreen> {
       Get.snackbar('Erreur', 'Assignation impossible',
           snackPosition: SnackPosition.BOTTOM);
     }
+  }
+
+  bool _isSameDay(DateTime first, DateTime second) {
+    return first.year == second.year &&
+        first.month == second.month &&
+        first.day == second.day;
+  }
+
+  Future<String?> _validateDriverAssignment({
+    required Trip trip,
+    required Driver driver,
+  }) async {
+    final driverTrips = await ApiService.getAdminDriverTrips(driver.id);
+    final otherTrips =
+        driverTrips.where((driverTrip) => driverTrip.id != trip.id).toList();
+
+    final sameDayTrip = otherTrips
+        .where((driverTrip) => _isSameDay(
+              driverTrip.departureTime,
+              trip.departureTime,
+            ))
+        .firstOrNull;
+    if (sameDayTrip != null) {
+      return 'Ce chauffeur a déjà un trajet enregistré le même jour.';
+    }
+
+    final previousTrips = otherTrips
+        .where((driverTrip) =>
+            driverTrip.departureTime.isBefore(trip.departureTime))
+        .toList()
+      ..sort((a, b) => b.departureTime.compareTo(a.departureTime));
+
+    if (previousTrips.isEmpty) return null;
+
+    final lastTrip = previousTrips.first;
+    if (lastTrip.destinationCity.toLowerCase() !=
+        trip.departureCity.trim().toLowerCase()) {
+      return 'Ce chauffeur devrait être à ${lastTrip.destinationCity}. Le départ doit commencer depuis cette ville.';
+    }
+
+    return null;
   }
 
   Future<void> _removeDriver(Trip trip) async {

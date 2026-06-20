@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:transport_app/controllers/search_controller.dart';
 import 'package:transport_app/screens/user/bookings/seat_selection_screen.dart';
 import 'package:transport_app/theme/app_theme.dart';
+import 'package:transport_app/utils/city_data.dart';
 
 import 'trips_screen.dart';
 
@@ -14,30 +15,24 @@ class SearchScreen extends StatelessWidget {
 
   final SearchTripController controller = Get.put(SearchTripController());
 
-  Future<String?> _selectCity(BuildContext context) async {
+  Future<String?> _selectCity(
+    BuildContext context, {
+    required String excludedCity,
+  }) async {
     return await showDialog<String>(
       context: context,
       builder: (context) {
         return SimpleDialog(
           title: const Text('Choisir une ville'),
-          children: [
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, 'Nouakchott'),
-              child: const Text('Nouakchott'),
-            ),
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, 'Aleg'),
-              child: const Text('Aleg'),
-            ),
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, 'Rosso'),
-              child: const Text('Rosso'),
-            ),
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, 'Nouadhibou'),
-              child: const Text('Nouadhibou'),
-            ),
-          ],
+          children: availableCities
+              .where((city) => city.name != excludedCity)
+              .map(
+                (city) => SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, city.name),
+                  child: Text(city.name),
+                ),
+              )
+              .toList(),
         );
       },
     );
@@ -123,7 +118,10 @@ class SearchScreen extends StatelessWidget {
                   label: 'Ville de départ',
                   value: controller.departureCity.value,
                   onTap: () async {
-                    final city = await _selectCity(context);
+                    final city = await _selectCity(
+                      context,
+                      excludedCity: controller.destinationCity.value,
+                    );
 
                     if (city != null) {
                       controller.setDeparture(city);
@@ -139,7 +137,10 @@ class SearchScreen extends StatelessWidget {
                   label: 'Destination',
                   value: controller.destinationCity.value,
                   onTap: () async {
-                    final city = await _selectCity(context);
+                    final city = await _selectCity(
+                      context,
+                      excludedCity: controller.departureCity.value,
+                    );
 
                     if (city != null) {
                       controller.setDestination(city);
