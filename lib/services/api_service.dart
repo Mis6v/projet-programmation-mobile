@@ -9,8 +9,8 @@ import '../models/trip.dart';
 import '../models/trip_tracking.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:9090/api';
-  static const String authBaseUrl = 'http://localhost:9090/auth';
+  static const String baseUrl = 'https://esselam-transport-api.onrender.com/api';
+  static const String authBaseUrl = 'https://esselam-transport-api.onrender.com/auth';
 
   static Map<String, String> get _headers => {
         'Content-Type': 'application/json',
